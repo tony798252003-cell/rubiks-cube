@@ -1,7 +1,8 @@
-import { createContext, useReducer, ReactNode } from 'react'
+import { createContext, useReducer, useEffect, ReactNode } from 'react'
 import type { CubeEncoding } from '../types/encoding'
 import type { CornerPosition, EdgePosition } from '../types/cube'
 import { DEFAULT_SPEFFZ_ENCODING } from '../types/encoding'
+import { saveToStorage, loadFromStorage } from '../utils/storage'
 
 export interface CubeState {
   encoding: CubeEncoding
@@ -16,10 +17,14 @@ export type CubeAction =
   | { type: 'TOGGLE_LABELS' }
   | { type: 'SET_SCRAMBLE'; payload: string }
 
-const initialState: CubeState = {
+const defaultState: CubeState = {
   encoding: DEFAULT_SPEFFZ_ENCODING,
   showLabels: true,
   currentScramble: null,
+}
+
+function getInitialState(): CubeState {
+  return loadFromStorage() ?? defaultState
 }
 
 function cubeReducer(state: CubeState, action: CubeAction): CubeState {
@@ -59,7 +64,8 @@ interface CubeContextValue {
 export const CubeContext = createContext<CubeContextValue | undefined>(undefined)
 
 export function CubeProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(cubeReducer, initialState)
+  const [state, dispatch] = useReducer(cubeReducer, undefined, getInitialState)
+  useEffect(() => { saveToStorage(state) }, [state])
   return (
     <CubeContext.Provider value={{ state, dispatch }}>
       {children}
