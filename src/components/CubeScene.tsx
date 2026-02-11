@@ -6,10 +6,11 @@ import CubeLabels from './CubeLabels'
 export default function CubeScene() {
   return (
     <div className="w-full h-full">
-      <Canvas camera={{ position: [5, 5, 5], fov: 50 }}>
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={1} />
-        <OrbitControls enableDamping dampingFactor={0.05} minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI * 3 / 4} />
+      <Canvas camera={{ position: [4, 3, 5], fov: 50 }}>
+        <ambientLight intensity={0.6} />
+        <directionalLight position={[10, 10, 5]} intensity={0.8} />
+        <directionalLight position={[-5, -5, -5]} intensity={0.3} />
+        <OrbitControls enableDamping dampingFactor={0.05} />
         <RubiksCube />
         <CubeLabels />
       </Canvas>

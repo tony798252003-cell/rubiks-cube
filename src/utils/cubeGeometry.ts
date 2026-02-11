@@ -1,20 +1,24 @@
 import type { Face, Color } from '../types/cube'
 
+// 色彩方案：白色朝下(D)、紅色朝前(F)
 export function getFaceColor(face: Face): Color {
   const colorMap: Record<Face, Color> = {
-    'U': 'white', 'D': 'yellow', 'F': 'green',
-    'B': 'blue', 'L': 'orange', 'R': 'red',
+    'U': 'yellow', 'D': 'white', 'F': 'red',
+    'B': 'orange', 'R': 'green', 'L': 'blue',
   }
   return colorMap[face]
 }
 
 export function getColorHex(color: Color): string {
   const hexMap: Record<Color, string> = {
-    'white': '#FFFFFF', 'yellow': '#FFFF00', 'green': '#00FF00',
-    'blue': '#0000FF', 'orange': '#FF8800', 'red': '#FF0000',
+    'white': '#FFFFFF', 'yellow': '#FFD500', 'green': '#00D800',
+    'blue': '#0046AD', 'orange': '#FF5800', 'red': '#C41E3A',
   }
   return hexMap[color]
 }
+
+// 內部面（不可見）的顏色
+export const INTERNAL_COLOR = '#1a1a1a'
 
 export function getCubiePosition(x: number, y: number, z: number): [number, number, number] {
   const spacing = 1.05

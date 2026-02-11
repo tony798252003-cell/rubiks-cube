@@ -2,18 +2,18 @@ import { describe, it, expect } from 'vitest'
 import { getFaceColor, getColorHex, getCubiePosition } from './cubeGeometry'
 
 describe('cubeGeometry', () => {
-  it('returns correct colors for each face', () => {
-    expect(getFaceColor('U')).toBe('white')
-    expect(getFaceColor('D')).toBe('yellow')
-    expect(getFaceColor('F')).toBe('green')
-    expect(getFaceColor('B')).toBe('blue')
-    expect(getFaceColor('L')).toBe('orange')
-    expect(getFaceColor('R')).toBe('red')
+  it('returns correct colors for each face (white-down, red-front)', () => {
+    expect(getFaceColor('U')).toBe('yellow')
+    expect(getFaceColor('D')).toBe('white')
+    expect(getFaceColor('F')).toBe('red')
+    expect(getFaceColor('B')).toBe('orange')
+    expect(getFaceColor('R')).toBe('green')
+    expect(getFaceColor('L')).toBe('blue')
   })
 
   it('returns correct hex colors', () => {
     expect(getColorHex('white')).toBe('#FFFFFF')
-    expect(getColorHex('red')).toBe('#FF0000')
+    expect(getColorHex('red')).toBe('#C41E3A')
   })
 
   it('calculates cubie positions correctly', () => {

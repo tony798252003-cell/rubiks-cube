@@ -1,11 +1,12 @@
 import { useRef } from 'react'
 import { Mesh } from 'three'
+import { Edges } from '@react-three/drei'
+import { getColorHex, INTERNAL_COLOR } from '../utils/cubeGeometry'
 import type { Color } from '../types/cube'
-import { getColorHex } from '../utils/cubeGeometry'
 
 interface CubieProps {
   position: [number, number, number]
-  colors: Color[]
+  colors: (string | null)[] // null = 內部面
 }
 
 export default function Cubie({ position, colors }: CubieProps) {
@@ -17,9 +18,10 @@ export default function Cubie({ position, colors }: CubieProps) {
         <meshStandardMaterial
           key={index}
           attach={`material-${index}`}
-          color={getColorHex(color)}
+          color={color ? getColorHex(color as Color) : INTERNAL_COLOR}
         />
       ))}
+      <Edges threshold={15} color="black" lineWidth={2} />
     </mesh>
   )
 }

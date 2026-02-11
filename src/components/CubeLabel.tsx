@@ -1,18 +1,25 @@
-import { Html } from '@react-three/drei'
+import { Text } from '@react-three/drei'
 
 interface CubeLabelProps {
   position: [number, number, number]
+  rotation: [number, number, number]
   label: string
-  visible?: boolean
 }
 
-export default function CubeLabel({ position, label, visible = true }: CubeLabelProps) {
-  if (!visible) return null
+export default function CubeLabel({ position, rotation, label }: CubeLabelProps) {
   return (
-    <Html position={position} center>
-      <div className="bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm font-bold pointer-events-none select-none">
-        {label}
-      </div>
-    </Html>
+    <Text
+      position={position}
+      rotation={rotation}
+      fontSize={0.35}
+      color="black"
+      anchorX="center"
+      anchorY="middle"
+      fontWeight="bold"
+      outlineWidth={0.02}
+      outlineColor="white"
+    >
+      {label}
+    </Text>
   )
 }

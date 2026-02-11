@@ -1,6 +1,5 @@
 import Cubie from './Cubie'
 import { getCubiePosition } from '../utils/cubeGeometry'
-import type { Color } from '../types/cube'
 
 export default function RubiksCube() {
   const cubies: JSX.Element[] = []
@@ -19,15 +18,15 @@ export default function RubiksCube() {
   return <group>{cubies}</group>
 }
 
-function getCubieColors(x: number, y: number, z: number): Color[] {
-  // Box geometry face order: +x, -x, +y, -y, +z, -z
-  const black: Color = 'white' // placeholder for internal faces
+// 色彩方案：白色朝下(D), 紅色朝前(F)
+// Box geometry face order: +x, -x, +y, -y, +z, -z
+function getCubieColors(x: number, y: number, z: number): (string | null)[] {
   return [
-    x === 2 ? 'red' : black,     // +x = R face
-    x === 0 ? 'orange' : black,  // -x = L face
-    y === 2 ? 'white' : black,   // +y = U face
-    y === 0 ? 'yellow' : black,  // -y = D face
-    z === 2 ? 'green' : black,   // +z = F face
-    z === 0 ? 'blue' : black,    // -z = B face
+    x === 2 ? 'green' : null,   // +x = R face = 綠
+    x === 0 ? 'blue' : null,    // -x = L face = 藍
+    y === 2 ? 'yellow' : null,  // +y = U face = 黃
+    y === 0 ? 'white' : null,   // -y = D face = 白
+    z === 2 ? 'red' : null,     // +z = F face = 紅
+    z === 0 ? 'orange' : null,  // -z = B face = 橘
   ]
 }
