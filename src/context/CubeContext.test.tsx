@@ -12,16 +12,16 @@ describe('CubeContext', () => {
     expect(result.current.state.encoding).toEqual(DEFAULT_SPEFFZ_ENCODING)
   })
 
-  it('allows updating corner encoding', () => {
+  it('allows updating a sticker encoding', () => {
     const { result } = renderHook(() => useCubeContext(), {
       wrapper: CubeProvider,
     })
     act(() => {
       result.current.dispatch({
-        type: 'UPDATE_CORNER_ENCODING',
-        payload: { position: 'UBL', label: 'X' },
+        type: 'UPDATE_STICKER',
+        payload: { type: 'corners', key: 'UBL-U', label: 'Z' },
       })
     })
-    expect(result.current.state.encoding.corners.UBL).toBe('X')
+    expect(result.current.state.encoding.corners['UBL-U']).toBe('Z')
   })
 })

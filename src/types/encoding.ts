@@ -1,21 +1,79 @@
-import type { CornerPosition, EdgePosition } from './cube'
+import type { CornerPosition, EdgePosition, Face } from './cube'
 
-export type CornerEncoding = Record<CornerPosition, string>
-export type EdgeEncoding = Record<EdgePosition, string>
-
+// 完整編碼系統：每個貼紙都有獨立的編碼
+// Key 格式："piece-face"，例如 "UFR-U", "UFR-F", "UFR-R"
 export interface CubeEncoding {
-  corners: CornerEncoding
-  edges: EdgeEncoding
+  corners: Record<string, string> // 24 個 (8 角塊 × 3 面)
+  edges: Record<string, string>   // 24 個 (12 邊塊 × 2 面)
 }
 
+// 角塊的面組合：每個角塊有 3 個外露面
+export const CORNER_FACES: Record<CornerPosition, Face[]> = {
+  'UBL': ['U', 'B', 'L'],
+  'UBR': ['U', 'B', 'R'],
+  'UFR': ['U', 'F', 'R'],
+  'UFL': ['U', 'F', 'L'],
+  'DBL': ['D', 'B', 'L'],
+  'DBR': ['D', 'B', 'R'],
+  'DFR': ['D', 'F', 'R'],
+  'DFL': ['D', 'F', 'L'],
+}
+
+// 邊塊的面組合：每個邊塊有 2 個外露面
+export const EDGE_FACES: Record<EdgePosition, Face[]> = {
+  'UB': ['U', 'B'],
+  'UR': ['U', 'R'],
+  'UF': ['U', 'F'],
+  'UL': ['U', 'L'],
+  'BL': ['B', 'L'],
+  'BR': ['B', 'R'],
+  'FR': ['F', 'R'],
+  'FL': ['F', 'L'],
+  'DB': ['D', 'B'],
+  'DR': ['D', 'R'],
+  'DF': ['D', 'F'],
+  'DL': ['D', 'L'],
+}
+
+// Speffz 預設編碼
+// 角塊：每面 4 個角貼紙，順時針排列
+// U→A,B,C,D  L→E,F,G,H  F→I,J,K,L  R→M,N,O,P  B→Q,R,S,T  D→U,V,W,X
 export const DEFAULT_SPEFFZ_ENCODING: CubeEncoding = {
   corners: {
-    'UBL': 'A', 'UBR': 'B', 'UFR': 'C', 'UFL': 'D',
-    'DBL': 'E', 'DBR': 'F', 'DFR': 'G', 'DFL': 'H',
+    // U 面 (A-D)
+    'UBL-U': 'A', 'UBR-U': 'B', 'UFR-U': 'C', 'UFL-U': 'D',
+    // L 面 (E-H)
+    'UBL-L': 'E', 'DBL-L': 'F', 'DFL-L': 'G', 'UFL-L': 'H',
+    // F 面 (I-L)
+    'UFL-F': 'I', 'UFR-F': 'J', 'DFR-F': 'K', 'DFL-F': 'L',
+    // R 面 (M-P)
+    'UFR-R': 'M', 'UBR-R': 'N', 'DBR-R': 'O', 'DFR-R': 'P',
+    // B 面 (Q-T)
+    'UBR-B': 'Q', 'UBL-B': 'R', 'DBL-B': 'S', 'DBR-B': 'T',
+    // D 面 (U-X)
+    'DFL-D': 'U', 'DFR-D': 'V', 'DBR-D': 'W', 'DBL-D': 'X',
   },
   edges: {
-    'UB': 'A', 'UR': 'B', 'UF': 'C', 'UL': 'D',
-    'BL': 'E', 'BR': 'F', 'FR': 'G', 'FL': 'H',
-    'DB': 'I', 'DR': 'J', 'DF': 'K', 'DL': 'L',
+    // U 面 (A-D)
+    'UB-U': 'A', 'UR-U': 'B', 'UF-U': 'C', 'UL-U': 'D',
+    // L 面 (E-H)
+    'UL-L': 'E', 'BL-L': 'F', 'DL-L': 'G', 'FL-L': 'H',
+    // F 面 (I-L)
+    'UF-F': 'I', 'FR-F': 'J', 'DF-F': 'K', 'FL-F': 'L',
+    // R 面 (M-P)
+    'UR-R': 'M', 'BR-R': 'N', 'DR-R': 'O', 'FR-R': 'P',
+    // B 面 (Q-T)
+    'UB-B': 'Q', 'BL-B': 'R', 'DB-B': 'S', 'BR-B': 'T',
+    // D 面 (U-X)
+    'DF-D': 'U', 'DR-D': 'V', 'DB-D': 'W', 'DL-D': 'X',
   },
+}
+
+// 面的顯示順序（用於 UI 分組）
+export const FACES_ORDER: Face[] = ['U', 'L', 'F', 'R', 'B', 'D']
+
+// 面名稱
+export const FACE_NAMES: Record<Face, string> = {
+  'U': '上面 (U)', 'D': '下面 (D)', 'F': '前面 (F)',
+  'B': '後面 (B)', 'R': '右面 (R)', 'L': '左面 (L)',
 }

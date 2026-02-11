@@ -1,6 +1,5 @@
 import { createContext, useReducer, useEffect, ReactNode } from 'react'
 import type { CubeEncoding } from '../types/encoding'
-import type { CornerPosition, EdgePosition } from '../types/cube'
 import { DEFAULT_SPEFFZ_ENCODING } from '../types/encoding'
 import { saveToStorage, loadFromStorage } from '../utils/storage'
 
@@ -11,8 +10,7 @@ export interface CubeState {
 }
 
 export type CubeAction =
-  | { type: 'UPDATE_CORNER_ENCODING'; payload: { position: CornerPosition; label: string } }
-  | { type: 'UPDATE_EDGE_ENCODING'; payload: { position: EdgePosition; label: string } }
+  | { type: 'UPDATE_STICKER'; payload: { type: 'corners' | 'edges'; key: string; label: string } }
   | { type: 'RESET_ENCODING' }
   | { type: 'TOGGLE_LABELS' }
   | { type: 'SET_SCRAMBLE'; payload: string }
@@ -29,22 +27,16 @@ function getInitialState(): CubeState {
 
 function cubeReducer(state: CubeState, action: CubeAction): CubeState {
   switch (action.type) {
-    case 'UPDATE_CORNER_ENCODING':
+    case 'UPDATE_STICKER': {
+      const { type, key, label } = action.payload
       return {
         ...state,
         encoding: {
           ...state.encoding,
-          corners: { ...state.encoding.corners, [action.payload.position]: action.payload.label },
+          [type]: { ...state.encoding[type], [key]: label },
         },
       }
-    case 'UPDATE_EDGE_ENCODING':
-      return {
-        ...state,
-        encoding: {
-          ...state.encoding,
-          edges: { ...state.encoding.edges, [action.payload.position]: action.payload.label },
-        },
-      }
+    }
     case 'RESET_ENCODING':
       return { ...state, encoding: DEFAULT_SPEFFZ_ENCODING }
     case 'TOGGLE_LABELS':
