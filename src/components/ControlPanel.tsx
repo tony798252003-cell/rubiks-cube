@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useCubeContext } from '../hooks/useCubeContext'
 import { generateScramble } from '../utils/scramble'
+import EncodingPanel from './EncodingPanel'
 
 export default function ControlPanel() {
   const { state, dispatch } = useCubeContext()
@@ -12,6 +13,8 @@ export default function ControlPanel() {
   }
 
   return (
+    <>
+    <EncodingPanel isOpen={showEncodingPanel} onClose={() => setShowEncodingPanel(false)} />
     <div className="fixed bottom-0 left-0 right-0 bg-gray-800 p-4">
       {state.currentScramble && (
         <div className="mb-4 p-3 bg-gray-700 rounded max-w-2xl mx-auto">
@@ -40,5 +43,6 @@ export default function ControlPanel() {
         </button>
       </div>
     </div>
+    </>
   )
 }
