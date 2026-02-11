@@ -1,5 +1,6 @@
 import './index.css'
 import CubeScene from './components/CubeScene'
+import ControlPanel from './components/ControlPanel'
 
 function App() {
   return (
@@ -7,8 +8,9 @@ function App() {
       <header className="p-4 bg-gray-800">
         <h1 className="text-white text-2xl">魔術方塊盲解訓練</h1>
       </header>
-      <main className="flex-1">
+      <main className="flex-1 relative">
         <CubeScene />
+        <ControlPanel />
       </main>
     </div>
   )

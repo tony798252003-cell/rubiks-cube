@@ -7,6 +7,10 @@ vi.mock('./components/CubeScene', () => ({
   default: () => <div data-testid="cube-scene-mock" />,
 }))
 
+vi.mock('./components/ControlPanel', () => ({
+  default: () => <div data-testid="control-panel-mock" />,
+}))
+
 describe('App', () => {
   it('renders heading', () => {
     render(<App />)
