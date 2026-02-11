@@ -1,5 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
+import RubiksCube from './RubiksCube'
 
 export default function CubeScene() {
   return (
@@ -13,10 +14,7 @@ export default function CubeScene() {
           minPolarAngle={Math.PI / 4}
           maxPolarAngle={Math.PI * 3 / 4}
         />
-        <mesh>
-          <boxGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial color="orange" />
-        </mesh>
+        <RubiksCube />
       </Canvas>
     </div>
   )
