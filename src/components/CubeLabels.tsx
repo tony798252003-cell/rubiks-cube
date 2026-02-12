@@ -42,12 +42,14 @@ function parseStickerKey(key: string): { piece: string; face: Face } {
 
 export default function CubeLabels() {
   const { state } = useCubeContext()
-  if (!state.showLabels) return null
+  if (state.labelMode === 'none') return null
 
-  const labels: JSX.Element[] = []
+  const labels: React.JSX.Element[] = []
 
   // 角塊貼紙
-  for (const [stickerKey, label] of Object.entries(state.encoding.corners)) {
+  if (state.labelMode === 'edges') {
+    // Skip corners when showing edges only
+  } else for (const [stickerKey, label] of Object.entries(state.encoding.corners)) {
     const { piece, face } = parseStickerKey(stickerKey)
     const gridPos = cornerGridPos[piece as CornerPosition]
     if (!gridPos) continue
@@ -69,7 +71,9 @@ export default function CubeLabels() {
   }
 
   // 邊塊貼紙
-  for (const [stickerKey, label] of Object.entries(state.encoding.edges)) {
+  if (state.labelMode === 'corners') {
+    // Skip edges when showing corners only
+  } else for (const [stickerKey, label] of Object.entries(state.encoding.edges)) {
     const { piece, face } = parseStickerKey(stickerKey)
     const gridPos = edgeGridPos[piece as EdgePosition]
     if (!gridPos) continue

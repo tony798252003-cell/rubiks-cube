@@ -35,6 +35,38 @@ export const EDGE_FACES: Record<EdgePosition, Face[]> = {
   'DL': ['D', 'L'],
 }
 
+// 注音預設編碼（Buffer: 邊塊B和M, 角塊A和R）
+export const DEFAULT_ZHUYIN_ENCODING: CubeEncoding = {
+  corners: {
+    // U 面 (A-D)
+    'UBL-U': '', 'UBR-U': 'ㄍ', 'UFR-U': 'ㄎ', 'UFL-U': 'ㄏ',
+    // L 面 (E-H)
+    'UBL-L': 'ㄓ', 'DBL-L': 'ㄖ', 'DFL-L': 'ㄕ', 'UFL-L': 'ㄔ',
+    // F 面 (I-L)
+    'UFL-F': 'ㄒ', 'UFR-F': 'ㄑ', 'DFR-F': 'ㄊ', 'DFL-F': 'ㄉ',
+    // R 面 (M-P)
+    'UFR-R': 'ㄗ', 'UBR-R': 'ㄘ', 'DBR-R': 'ㄙ', 'DFR-R': '1',
+    // B 面 (Q-T)
+    'UBR-B': 'ㄐ', 'UBL-B': '', 'DBL-B': 'ㄌ', 'DBR-B': 'ㄋ',
+    // D 面 (U-X)
+    'DFL-D': 'ㄅ', 'DFR-D': 'ㄆ', 'DBR-D': 'ㄈ', 'DBL-D': 'ㄇ',
+  },
+  edges: {
+    // U 面 (A-D)
+    'UB-U': 'ㄍ', 'UR-U': '', 'UF-U': 'ㄏ', 'UL-U': 'ㄎ',
+    // L 面 (E-H)
+    'UL-L': 'ㄑ', 'BL-L': 'ㄗ', 'DL-L': 'ㄊ', 'FL-L': 'ㄘ',
+    // F 面 (I-L)
+    'UF-F': 'ㄒ', 'FR-F': 'ㄕ', 'DF-F': 'ㄉ', 'FL-F': 'ㄔ',
+    // R 面 (M-P)
+    'UR-R': '', 'BR-R': '1', 'DR-R': 'ㄌ', 'FR-R': 'ㄙ',
+    // B 面 (Q-T)
+    'UB-B': 'ㄐ', 'BL-B': 'ㄓ', 'DB-B': 'ㄋ', 'BR-B': 'ㄖ',
+    // D 面 (U-X)
+    'DF-D': 'ㄅ', 'DR-D': 'ㄈ', 'DB-D': 'ㄇ', 'DL-D': 'ㄆ',
+  },
+}
+
 // Speffz 預設編碼
 // 角塊：每面 4 個角貼紙，順時針排列
 // U→A,B,C,D  L→E,F,G,H  F→I,J,K,L  R→M,N,O,P  B→Q,R,S,T  D→U,V,W,X

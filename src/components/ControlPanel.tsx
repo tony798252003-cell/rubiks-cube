@@ -17,17 +17,34 @@ export default function ControlPanel() {
     <EncodingPanel isOpen={showEncodingPanel} onClose={() => setShowEncodingPanel(false)} />
     <div className="fixed bottom-0 left-0 right-0 bg-gray-800 p-4">
       {state.currentScramble && (
-        <div className="mb-4 p-3 bg-gray-700 rounded max-w-2xl mx-auto">
-          <p className="text-gray-400 text-sm mb-1">當前打亂：</p>
-          <p className="text-white font-mono text-sm">{state.currentScramble}</p>
+        <div className="mb-4 space-y-3 max-w-2xl mx-auto">
+          <div className="p-3 bg-gray-700 rounded">
+            <p className="text-gray-400 text-sm mb-1">當前打亂：</p>
+            <p className="text-white font-mono text-sm">{state.currentScramble}</p>
+          </div>
+          {state.memo && (
+            <div className="p-3 bg-gray-700 rounded">
+              <p className="text-gray-400 text-sm mb-1">記憶編碼：</p>
+              <div className="space-y-1">
+                <p className="text-white font-mono text-sm">
+                  <span className="text-green-400">邊塊：</span> {state.memo.edges || '(已還原)'}
+                </p>
+                <p className="text-white font-mono text-sm">
+                  <span className="text-blue-400">角塊：</span> {state.memo.corners || '(已還原)'}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       )}
       <div className="flex gap-4 justify-center">
         <button
-          onClick={() => dispatch({ type: 'TOGGLE_LABELS' })}
+          onClick={() => dispatch({ type: 'CYCLE_LABEL_MODE' })}
           className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition"
         >
-          {state.showLabels ? '隱藏標註' : '顯示標註'}
+          {state.labelMode === 'all' ? '標註：全部' :
+           state.labelMode === 'corners' ? '標註：角塊' :
+           state.labelMode === 'edges' ? '標註：邊塊' : '標註：隱藏'}
         </button>
         <button
           onClick={handleGenerateScramble}

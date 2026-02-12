@@ -1,24 +1,32 @@
 import { createContext, useReducer, useEffect, ReactNode } from 'react'
 import type { CubeEncoding } from '../types/encoding'
-import { DEFAULT_SPEFFZ_ENCODING } from '../types/encoding'
+import { DEFAULT_ZHUYIN_ENCODING } from '../types/encoding'
 import { saveToStorage, loadFromStorage } from '../utils/storage'
+import { applyScramble, createSolvedState, type CubeState as CubeStickers } from '../utils/cubeState'
+import { analyzeBlindsolve } from '../utils/blindsolve'
+
+export type LabelMode = 'all' | 'corners' | 'edges' | 'none'
 
 export interface CubeState {
   encoding: CubeEncoding
-  showLabels: boolean
+  labelMode: LabelMode
   currentScramble: string | null
+  cubeStickers: CubeStickers
+  memo: { edges: string; corners: string } | null
 }
 
 export type CubeAction =
   | { type: 'UPDATE_STICKER'; payload: { type: 'corners' | 'edges'; key: string; label: string } }
   | { type: 'RESET_ENCODING' }
-  | { type: 'TOGGLE_LABELS' }
+  | { type: 'CYCLE_LABEL_MODE' }
   | { type: 'SET_SCRAMBLE'; payload: string }
 
 const defaultState: CubeState = {
-  encoding: DEFAULT_SPEFFZ_ENCODING,
-  showLabels: true,
+  encoding: DEFAULT_ZHUYIN_ENCODING,
+  labelMode: 'all',
   currentScramble: null,
+  cubeStickers: createSolvedState(),
+  memo: null,
 }
 
 function getInitialState(): CubeState {
@@ -38,11 +46,22 @@ function cubeReducer(state: CubeState, action: CubeAction): CubeState {
       }
     }
     case 'RESET_ENCODING':
-      return { ...state, encoding: DEFAULT_SPEFFZ_ENCODING }
-    case 'TOGGLE_LABELS':
-      return { ...state, showLabels: !state.showLabels }
-    case 'SET_SCRAMBLE':
-      return { ...state, currentScramble: action.payload }
+      return { ...state, encoding: DEFAULT_ZHUYIN_ENCODING }
+    case 'CYCLE_LABEL_MODE': {
+      const modes: LabelMode[] = ['all', 'corners', 'edges', 'none']
+      const idx = modes.indexOf(state.labelMode)
+      return { ...state, labelMode: modes[(idx + 1) % modes.length] }
+    }
+    case 'SET_SCRAMBLE': {
+      const stickers = applyScramble(action.payload)
+      const memo = analyzeBlindsolve(stickers, state.encoding)
+      return {
+        ...state,
+        currentScramble: action.payload,
+        cubeStickers: stickers,
+        memo,
+      }
+    }
     default:
       return state
   }

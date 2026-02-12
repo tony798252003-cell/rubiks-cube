@@ -5,11 +5,12 @@ import { useCubeContext } from '../hooks/useCubeContext'
 import { DEFAULT_SPEFFZ_ENCODING } from '../types/encoding'
 
 describe('CubeContext', () => {
-  it('provides default encoding', () => {
+  it('provides default encoding and label mode', () => {
     const { result } = renderHook(() => useCubeContext(), {
       wrapper: CubeProvider,
     })
     expect(result.current.state.encoding).toEqual(DEFAULT_SPEFFZ_ENCODING)
+    expect(result.current.state.labelMode).toBe('all')
   })
 
   it('allows updating a sticker encoding', () => {

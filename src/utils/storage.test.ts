@@ -1,12 +1,19 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { saveToStorage, loadFromStorage, STORAGE_KEY, clearStorage } from './storage'
 import { DEFAULT_SPEFFZ_ENCODING } from '../types/encoding'
+import { createSolvedState } from './cubeState'
 
 describe('storage', () => {
   beforeEach(() => { localStorage.clear() })
 
   it('saves and loads state', () => {
-    const state = { encoding: DEFAULT_SPEFFZ_ENCODING, showLabels: true, currentScramble: "R U R'" }
+    const state = {
+      encoding: DEFAULT_SPEFFZ_ENCODING,
+      labelMode: 'all' as const,
+      currentScramble: "R U R'",
+      cubeStickers: createSolvedState(),
+      memo: null
+    }
     saveToStorage(state)
     const loaded = loadFromStorage()
     expect(loaded?.encoding).toEqual(DEFAULT_SPEFFZ_ENCODING)
@@ -23,7 +30,13 @@ describe('storage', () => {
   })
 
   it('clears storage', () => {
-    saveToStorage({ encoding: DEFAULT_SPEFFZ_ENCODING, showLabels: true, currentScramble: null })
+    saveToStorage({
+      encoding: DEFAULT_SPEFFZ_ENCODING,
+      labelMode: 'all',
+      currentScramble: null,
+      cubeStickers: createSolvedState(),
+      memo: null
+    })
     clearStorage()
     expect(loadFromStorage()).toBeNull()
   })

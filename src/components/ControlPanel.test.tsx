@@ -4,14 +4,20 @@ import { CubeProvider } from '../context/CubeContext'
 import ControlPanel from './ControlPanel'
 
 describe('ControlPanel', () => {
-  it('renders toggle labels button', () => {
+  it('renders label mode button', () => {
     render(<CubeProvider><ControlPanel /></CubeProvider>)
-    expect(screen.getByText('隱藏標註')).toBeInTheDocument()
+    expect(screen.getByText('標註：全部')).toBeInTheDocument()
   })
 
-  it('toggles label text on click', () => {
+  it('cycles label modes on click', () => {
     render(<CubeProvider><ControlPanel /></CubeProvider>)
-    fireEvent.click(screen.getByText('隱藏標註'))
-    expect(screen.getByText('顯示標註')).toBeInTheDocument()
+    fireEvent.click(screen.getByText('標註：全部'))
+    expect(screen.getByText('標註：角塊')).toBeInTheDocument()
+    fireEvent.click(screen.getByText('標註：角塊'))
+    expect(screen.getByText('標註：邊塊')).toBeInTheDocument()
+    fireEvent.click(screen.getByText('標註：邊塊'))
+    expect(screen.getByText('標註：隱藏')).toBeInTheDocument()
+    fireEvent.click(screen.getByText('標註：隱藏'))
+    expect(screen.getByText('標註：全部')).toBeInTheDocument()
   })
 })

@@ -1,8 +1,14 @@
 import './index.css'
 import CubeScene from './components/CubeScene'
 import ControlPanel from './components/ControlPanel'
+import { useEffect } from 'react'
+import { initializeCubeEngine } from './utils/cubeState'
 
 function App() {
+  useEffect(() => {
+    initializeCubeEngine()
+  }, [])
+
   return (
     <div className="w-screen h-screen bg-gray-900 flex flex-col">
       <header className="p-4 bg-gray-800">

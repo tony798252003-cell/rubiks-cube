@@ -1,4 +1,6 @@
 import type { CubeState } from '../context/CubeContext'
+import { applyScramble, createSolvedState } from './cubeState'
+import { analyzeBlindsolve } from './blindsolve'
 
 export const STORAGE_KEY = 'cubeTrainer'
 
@@ -20,10 +22,15 @@ export function loadFromStorage(): CubeState | null {
     if (!stored) return null
     const data = JSON.parse(stored)
     if (!data.encoding?.corners || !data.encoding?.edges) return null
+    const scramble = data.currentScramble ?? null
+    const stickers = scramble ? applyScramble(scramble) : createSolvedState()
+    const memo = scramble ? analyzeBlindsolve(stickers, data.encoding) : null
     return {
       encoding: data.encoding,
-      showLabels: data.showLabels ?? true,
-      currentScramble: data.currentScramble ?? null,
+      labelMode: data.labelMode ?? 'all',
+      currentScramble: scramble,
+      cubeStickers: stickers,
+      memo,
     }
   } catch {
     return null
