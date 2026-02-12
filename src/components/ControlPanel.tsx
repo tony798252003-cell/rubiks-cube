@@ -15,7 +15,7 @@ export default function ControlPanel() {
   return (
     <>
     <EncodingPanel isOpen={showEncodingPanel} onClose={() => setShowEncodingPanel(false)} />
-    <div className="fixed bottom-0 left-0 right-0 bg-gray-800 p-4">
+    <div className="bg-gray-800 p-4 flex-shrink-0">
       {state.currentScramble && (
         <div className="mb-4 space-y-3 max-w-2xl mx-auto">
           <div className="p-3 bg-gray-700 rounded">

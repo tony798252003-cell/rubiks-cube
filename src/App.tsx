@@ -14,8 +14,10 @@ function App() {
       <header className="p-4 bg-gray-800">
         <h1 className="text-white text-2xl">魔術方塊盲解訓練</h1>
       </header>
-      <main className="flex-1 relative">
-        <CubeScene />
+      <main className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 min-h-0">
+          <CubeScene />
+        </div>
         <ControlPanel />
       </main>
     </div>
