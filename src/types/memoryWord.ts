@@ -130,14 +130,15 @@ export function formatMemoWithWords(memo: string, dict: MemoryWordDict, showWord
   }
 
   // 收集記憶字（兩個一組）
+  // 重要：查找時順序是 code2, code1（第二個+第一個）
   const words: string[] = []
   for (let i = 0; i < codes.length; i += 2) {
     const code1 = codes[i]
     const code2 = codes[i + 1]
 
     if (code2) {
-      // 有配對
-      const word = getMemoryWord(dict, code1, code2)
+      // 有配對，順序反過來查找：code2 + code1
+      const word = getMemoryWord(dict, code2, code1)
       words.push(word)
     }
     // 奇數個最後一個不配對，不加入記憶字
