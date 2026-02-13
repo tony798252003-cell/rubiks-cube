@@ -28,6 +28,9 @@ const EDGES: Array<[string, [number, number, number], [Face, Face]]> = [
   ['DL', [0, 0, 1], ['D', 'L']],
 ]
 
+// 循環中斷時尋找下一個邊塊的順序（注音編碼順序：ㄍㄎㄏㄓㄔㄕㄖㄅㄆㄇㄈ）
+const EDGE_CYCLE_ORDER = ['UB', 'UL', 'UF', 'BL', 'FL', 'FR', 'BR', 'DF', 'DL', 'DB', 'DR']
+
 // 角塊定義
 const CORNERS: Array<[string, [number, number, number], [Face, Face, Face]]> = [
   ['UBL', [0, 2, 0], ['U', 'B', 'L']],
@@ -39,6 +42,9 @@ const CORNERS: Array<[string, [number, number, number], [Face, Face, Face]]> = [
   ['DFR', [2, 0, 2], ['D', 'R', 'F']],
   ['DFL', [0, 0, 2], ['D', 'F', 'L']],
 ]
+
+// 循環中斷時尋找下一個角塊的順序（注音編碼順序：ㄍㄎㄏㄅㄆㄇㄈ）
+const CORNER_CYCLE_ORDER = ['UBR', 'UFR', 'UFL', 'DFL', 'DFR', 'DBL', 'DBR']
 
 const FACE_DIR: Record<Face, '+x' | '-x' | '+y' | '-y' | '+z' | '-z'> = {
   'U': '+y', 'D': '-y', 'F': '+z', 'B': '-z', 'R': '+x', 'L': '-x'
@@ -127,10 +133,25 @@ function traceEdges(
 
   // 找出第一個要追蹤的位置
   let currentPiece = EDGE_BUFFER
+  let currentFace: Face | null = null  // 追蹤當前應該看的面
 
   // 如果 buffer 已還原，從 target 開始
   if (isEdgeSolved(state, EDGE_BUFFER, indexMap)) {
     currentPiece = EDGE_TARGET
+
+    // 如果 target 也已還原，從循環順序中找第一個未還原的
+    if (isEdgeSolved(state, EDGE_TARGET, indexMap)) {
+      let found = false
+      for (const piece of EDGE_CYCLE_ORDER) {
+        if (!isEdgeSolved(state, piece, indexMap)) {
+          currentPiece = piece
+          found = true
+          break
+        }
+      }
+      // 如果所有邊塊都已還原，返回空陣列
+      if (!found) return []
+    }
   }
 
   let cycleCount = 0
@@ -139,6 +160,20 @@ function traceEdges(
   while (cycleCount < maxCycles && visited.size < 12) {
     cycleCount++
     let cycleStartPiece = currentPiece
+    currentFace = null  // 新循環開始，重置面
+
+    // 如果不是第一個循環，先記錄新循環起點的編碼作為 cycle break
+    if (cycleCount > 1) {
+      const edgeInfo = EDGES.find(([p]) => p === currentPiece)
+      if (edgeInfo) {
+        const currentFaces = edgeInfo[2]
+        const cycleBreakSticker = `${currentPiece}-${currentFaces[0]}`
+        const cycleBreakLabel = encoding.edges[cycleBreakSticker]
+        if (cycleBreakLabel) {
+          memo.push(cycleBreakLabel)
+        }
+      }
+    }
 
     // 追蹤一個循環
     for (let i = 0; i < 24; i++) {
@@ -153,14 +188,16 @@ function traceEdges(
       if (!edgeInfo) break
 
       const currentFaces = edgeInfo[2]
-      const primaryIdx = indexMap[`${currentPiece}-${currentFaces[0]}`]
+      // 使用上一步指向的面，如果是循環開始則用第一個面
+      const targetFace = currentFace || currentFaces[0]
+      const primaryIdx = indexMap[`${currentPiece}-${targetFace}`]
       const primaryColor = state[primaryIdx]
 
       // 找出這個顏色組合在 solved state 是哪個邊塊，並返回「primaryColor 那面」的貼紙
       const targetSticker = findEdgeStickerByColors(color1, color2, primaryColor)
       if (!targetSticker) break
 
-      const targetPiece = targetSticker.split('-')[0]
+      const [targetPiece, targetFaceStr] = targetSticker.split('-') as [string, Face]
 
       // 標記當前 piece 為已訪問
       visited.add(currentPiece)
@@ -180,13 +217,14 @@ function traceEdges(
         break
       }
 
-      // 繼續追蹤
+      // 繼續追蹤，並記住下一步要看的面
       currentPiece = targetPiece
+      currentFace = targetFaceStr
     }
 
-    // 尋找下一個未訪問且未還原的邊塊作為新循環起點
+    // 尋找下一個未訪問且未還原的邊塊作為新循環起點（按照注音編碼順序）
     let foundNext = false
-    for (const [piece] of EDGES) {
+    for (const piece of EDGE_CYCLE_ORDER) {
       if (!visited.has(piece) && !isEdgeSolved(state, piece, indexMap)) {
         currentPiece = piece
         foundNext = true
@@ -260,10 +298,25 @@ function traceCorners(
 
   // 找出第一個要追蹤的位置
   let currentPiece = CORNER_BUFFER
+  let currentFace: Face | null = null  // 追蹤當前應該看的面
 
   // 如果 buffer 已還原，從 target 開始
   if (isCornerSolved(state, CORNER_BUFFER, indexMap)) {
     currentPiece = CORNER_TARGET
+
+    // 如果 target 也已還原，從循環順序中找第一個未還原的
+    if (isCornerSolved(state, CORNER_TARGET, indexMap)) {
+      let found = false
+      for (const piece of CORNER_CYCLE_ORDER) {
+        if (!isCornerSolved(state, piece, indexMap)) {
+          currentPiece = piece
+          found = true
+          break
+        }
+      }
+      // 如果所有角塊都已還原，返回空陣列
+      if (!found) return []
+    }
   }
 
   let cycleCount = 0
@@ -272,6 +325,20 @@ function traceCorners(
   while (cycleCount < maxCycles && visited.size < 8) {
     cycleCount++
     let cycleStartPiece = currentPiece
+    currentFace = null  // 新循環開始，重置面
+
+    // 如果不是第一個循環，先記錄新循環起點的編碼作為 cycle break
+    if (cycleCount > 1) {
+      const cornerInfo = CORNERS.find(([p]) => p === currentPiece)
+      if (cornerInfo) {
+        const currentFaces = cornerInfo[2]
+        const cycleBreakSticker = `${currentPiece}-${currentFaces[0]}`
+        const cycleBreakLabel = encoding.corners[cycleBreakSticker]
+        if (cycleBreakLabel) {
+          memo.push(cycleBreakLabel)
+        }
+      }
+    }
 
     // 追蹤一個循環
     for (let i = 0; i < 24; i++) {
@@ -286,14 +353,16 @@ function traceCorners(
       if (!cornerInfo) break
 
       const currentFaces = cornerInfo[2]
-      const primaryIdx = indexMap[`${currentPiece}-${currentFaces[0]}`]
+      // 使用上一步指向的面，如果是循環開始則用第一個面
+      const targetFace = currentFace || currentFaces[0]
+      const primaryIdx = indexMap[`${currentPiece}-${targetFace}`]
       const primaryColor = state[primaryIdx]
 
       // 找出這個顏色組合在 solved state 是哪個角塊，並返回「primaryColor 那面」的貼紙
       const targetSticker = findCornerStickerByColors(color1, color2, color3, primaryColor)
       if (!targetSticker) break
 
-      const targetPiece = targetSticker.split('-')[0]
+      const [targetPiece, targetFaceStr] = targetSticker.split('-') as [string, Face]
 
       // 標記當前 piece 為已訪問
       visited.add(currentPiece)
@@ -313,13 +382,14 @@ function traceCorners(
         break
       }
 
-      // 繼續追蹤
+      // 繼續追蹤，並記住下一步要看的面
       currentPiece = targetPiece
+      currentFace = targetFaceStr
     }
 
-    // 尋找下一個未訪問且未還原的角塊作為新循環起點
+    // 尋找下一個未訪問且未還原的角塊作為新循環起點（按照注音編碼順序）
     let foundNext = false
-    for (const [piece] of CORNERS) {
+    for (const piece of CORNER_CYCLE_ORDER) {
       if (!visited.has(piece) && !isCornerSolved(state, piece, indexMap)) {
         currentPiece = piece
         foundNext = true
