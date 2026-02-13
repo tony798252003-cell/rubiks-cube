@@ -140,8 +140,11 @@ export function formatMemoWithWords(memo: string, dict: MemoryWordDict, showWord
       // 有配對，順序反過來查找：code2 + code1
       const word = getMemoryWord(dict, code2, code1)
       words.push(word)
+    } else {
+      // 奇數個，最後一個單獨，查找重複組合（code1 + code1）
+      const word = getMemoryWord(dict, code1, code1)
+      words.push(word)
     }
-    // 奇數個最後一個不配對，不加入記憶字
   }
 
   // 如果有記憶字，加上括號
