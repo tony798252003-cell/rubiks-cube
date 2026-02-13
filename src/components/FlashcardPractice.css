@@ -2,64 +2,85 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
 }
 
 .flashcard-stats {
   display: flex;
-  gap: 15px;
+  gap: 12px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .stat-item {
-  font-size: 14px;
-  color: #666;
-  padding: 4px 8px;
-  background: white;
-  border-radius: 4px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.stat-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
 }
 
 .stat-item.new {
-  color: #007bff;
-  font-weight: 500;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2));
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
 }
 
 .stat-item.learning {
-  color: #ffc107;
-  font-weight: 500;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.2));
+  border-color: rgba(251, 191, 36, 0.3);
+  color: #fcd34d;
 }
 
 .stat-item.reviewing {
-  color: #28a745;
-  font-weight: 500;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(22, 163, 74, 0.2));
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #86efac;
 }
 
 .stat-item.due {
-  color: #dc3545;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2));
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
   font-weight: 600;
 }
 
 .start-practice-btn {
-  padding: 12px 24px;
-  background: #28a745;
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #10b981, #059669);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 16px;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.3s;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+  width: 100%;
 }
 
 .start-practice-btn:hover:not(:disabled) {
-  background: #218838;
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4);
 }
 
 .start-practice-btn:disabled {
-  background: #ccc;
+  background: rgba(255, 255, 255, 0.1);
   cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.5;
 }
 
 .flashcard-modal-overlay {
@@ -120,53 +141,68 @@
 }
 
 .codes-display {
-  font-size: 48px;
+  font-size: 56px;
   font-weight: bold;
-  color: #007bff;
-  letter-spacing: 10px;
-  padding: 30px;
-  background: #f8f9fa;
-  border-radius: 8px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 16px;
+  padding: 40px;
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
   margin: 0 auto;
-  max-width: 300px;
+  max-width: 350px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .show-answer-btn {
-  padding: 15px 40px;
-  background: #007bff;
+  padding: 16px 48px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 16px;
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.3s;
   margin: 0 auto;
   display: block;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
 }
 
 .show-answer-btn:hover {
-  background: #0056b3;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.4);
 }
 
 .flashcard-answer {
   text-align: center;
-  padding: 20px;
-  background: #e8f5e9;
-  border-radius: 8px;
-  border: 2px solid #4caf50;
+  padding: 32px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 2px solid rgba(16, 185, 129, 0.3);
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2);
 }
 
 .answer-label {
   font-size: 14px;
-  color: #666;
-  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 12px;
+  font-weight: 500;
 }
 
 .answer-word {
-  font-size: 36px;
+  font-size: 42px;
   font-weight: bold;
-  color: #2e7d32;
+  background: linear-gradient(135deg, #10b981, #059669);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .familiarity-buttons {
@@ -188,56 +224,66 @@
 
 .familiarity-btn {
   flex: 1;
-  padding: 15px 10px;
+  padding: 20px 12px;
   border: 2px solid;
-  border-radius: 8px;
+  border-radius: 16px;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
   align-items: center;
+  backdrop-filter: blur(10px);
 }
 
 .interval-hint {
   font-size: 11px;
-  font-weight: normal;
-  opacity: 0.8;
+  font-weight: 500;
+  opacity: 0.9;
 }
 
 .familiarity-btn.unfamiliar {
-  background: white;
-  border-color: #dc3545;
-  color: #dc3545;
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
 }
 
 .familiarity-btn.unfamiliar:hover {
-  background: #dc3545;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border-color: #ef4444;
   color: white;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(239, 68, 68, 0.3);
 }
 
 .familiarity-btn.okay {
-  background: white;
-  border-color: #ffc107;
-  color: #856404;
+  background: rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.5);
+  color: #fcd34d;
 }
 
 .familiarity-btn.okay:hover {
-  background: #ffc107;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  border-color: #fbbf24;
   color: white;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(251, 191, 36, 0.3);
 }
 
 .familiarity-btn.familiar {
-  background: white;
-  border-color: #28a745;
-  color: #28a745;
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.5);
+  color: #86efac;
 }
 
 .familiarity-btn.familiar:hover {
-  background: #28a745;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  border-color: #22c55e;
   color: white;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(34, 197, 94, 0.3);
 }
 
 .card-info {
