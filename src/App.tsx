@@ -25,16 +25,16 @@ function App() {
         </div>
       </header>
 
-      <main className="flex-1 flex overflow-hidden">
-        {/* Main content area */}
-        <div className="flex-1 flex flex-col lg:flex-row gap-6 p-6 max-w-7xl mx-auto w-full">
-          {/* Cube visualization - takes 60% width on large screens */}
-          <div className="flex-1 lg:w-3/5 rounded-2xl overflow-hidden backdrop-blur-xl bg-white/5 border border-white/10 shadow-2xl">
+      <main className="flex-1 flex overflow-hidden flex-col">
+        {/* Main content area - mobile first, 2/3 for cube, 1/3 for controls */}
+        <div className="flex-1 flex flex-col lg:flex-row lg:gap-6 lg:p-6 max-w-7xl lg:mx-auto w-full overflow-hidden">
+          {/* Cube visualization - 2/3 height on mobile, 60% width on desktop */}
+          <div className="flex-[2] lg:flex-1 lg:w-3/5 rounded-none lg:rounded-2xl overflow-hidden backdrop-blur-xl bg-white/5 lg:border border-white/10 shadow-2xl min-h-0">
             <CubeScene />
           </div>
 
-          {/* Control panel - takes 40% width on large screens */}
-          <div className="lg:w-2/5 flex flex-col">
+          {/* Control panel - 1/3 height on mobile, 40% width on desktop */}
+          <div className="flex-1 lg:w-2/5 flex flex-col overflow-auto">
             <ControlPanel />
           </div>
         </div>
