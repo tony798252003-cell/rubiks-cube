@@ -115,12 +115,21 @@ export function getMemoryWord(dict: MemoryWordDict, code1: string, code2: string
   return dict[key] || '未定'
 }
 
-// 將編碼序列轉換為帶記憶字的字串（兩個一組）
+// 將編碼序列轉換為帶記憶字的字串
+// 格式：ㄎ ㄊ ㄔ ㄍ ㄙ ㄖ (痛苦 公車 未定)
 // showWords: true 顯示記憶字，false 隱藏記憶字
 export function formatMemoWithWords(memo: string, dict: MemoryWordDict, showWords: boolean = true): string {
   const codes = memo.split(' ').filter(c => c.length > 0)
-  const pairs: string[] = []
 
+  // 原始編碼保持不變
+  const codesStr = codes.join(' ')
+
+  if (!showWords) {
+    return codesStr
+  }
+
+  // 收集記憶字（兩個一組）
+  const words: string[] = []
   for (let i = 0; i < codes.length; i += 2) {
     const code1 = codes[i]
     const code2 = codes[i + 1]
@@ -128,16 +137,15 @@ export function formatMemoWithWords(memo: string, dict: MemoryWordDict, showWord
     if (code2) {
       // 有配對
       const word = getMemoryWord(dict, code1, code2)
-      if (showWords) {
-        pairs.push(`${code1}${code2}(${word})`)
-      } else {
-        pairs.push(`${code1}${code2}`)
-      }
-    } else {
-      // 奇數個，最後一個單獨
-      pairs.push(code1)
+      words.push(word)
     }
+    // 奇數個最後一個不配對，不加入記憶字
   }
 
-  return pairs.join(' ')
+  // 如果有記憶字，加上括號
+  if (words.length > 0) {
+    return `${codesStr} (${words.join(' ')})`
+  }
+
+  return codesStr
 }
