@@ -116,7 +116,8 @@ export function getMemoryWord(dict: MemoryWordDict, code1: string, code2: string
 }
 
 // 將編碼序列轉換為帶記憶字的字串（兩個一組）
-export function formatMemoWithWords(memo: string, dict: MemoryWordDict): string {
+// showWords: true 顯示記憶字，false 隱藏記憶字
+export function formatMemoWithWords(memo: string, dict: MemoryWordDict, showWords: boolean = true): string {
   const codes = memo.split(' ').filter(c => c.length > 0)
   const pairs: string[] = []
 
@@ -127,12 +128,16 @@ export function formatMemoWithWords(memo: string, dict: MemoryWordDict): string 
     if (code2) {
       // 有配對
       const word = getMemoryWord(dict, code1, code2)
-      pairs.push(`${code1}${code2} ${word}`)
+      if (showWords) {
+        pairs.push(`${code1}${code2}(${word})`)
+      } else {
+        pairs.push(`${code1}${code2}`)
+      }
     } else {
       // 奇數個，最後一個單獨
       pairs.push(code1)
     }
   }
 
-  return pairs.join('  ')
+  return pairs.join(' ')
 }
