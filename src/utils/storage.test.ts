@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { saveToStorage, loadFromStorage, STORAGE_KEY, clearStorage } from './storage'
 import { DEFAULT_SPEFFZ_ENCODING } from '../types/encoding'
+import { DEFAULT_MEMORY_WORDS } from '../types/memoryWord'
 import { createSolvedState } from './cubeState'
 
 describe('storage', () => {
@@ -12,7 +13,8 @@ describe('storage', () => {
       labelMode: 'all' as const,
       currentScramble: "R U R'",
       cubeStickers: createSolvedState(),
-      memo: null
+      memo: null,
+      memoryWords: DEFAULT_MEMORY_WORDS,
     }
     saveToStorage(state)
     const loaded = loadFromStorage()
@@ -35,7 +37,8 @@ describe('storage', () => {
       labelMode: 'all',
       currentScramble: null,
       cubeStickers: createSolvedState(),
-      memo: null
+      memo: null,
+      memoryWords: DEFAULT_MEMORY_WORDS,
     })
     clearStorage()
     expect(loadFromStorage()).toBeNull()

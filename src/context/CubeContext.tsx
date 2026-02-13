@@ -1,6 +1,8 @@
 import { createContext, useReducer, useEffect, ReactNode } from 'react'
 import type { CubeEncoding } from '../types/encoding'
 import { DEFAULT_ZHUYIN_ENCODING } from '../types/encoding'
+import type { MemoryWordDict } from '../types/memoryWord'
+import { DEFAULT_MEMORY_WORDS } from '../types/memoryWord'
 import { saveToStorage, loadFromStorage } from '../utils/storage'
 import { applyScramble, createSolvedState, type CubeState as CubeStickers } from '../utils/cubeState'
 import { analyzeBlindsolve } from '../utils/blindsolve'
@@ -13,6 +15,7 @@ export interface CubeState {
   currentScramble: string | null
   cubeStickers: CubeStickers
   memo: { edges: string; corners: string } | null
+  memoryWords: MemoryWordDict
 }
 
 export type CubeAction =
@@ -20,6 +23,8 @@ export type CubeAction =
   | { type: 'RESET_ENCODING' }
   | { type: 'CYCLE_LABEL_MODE' }
   | { type: 'SET_SCRAMBLE'; payload: string }
+  | { type: 'UPDATE_MEMORY_WORD'; payload: { key: string; word: string } }
+  | { type: 'RESET_MEMORY_WORDS' }
 
 const defaultState: CubeState = {
   encoding: DEFAULT_ZHUYIN_ENCODING,
@@ -27,6 +32,7 @@ const defaultState: CubeState = {
   currentScramble: null,
   cubeStickers: createSolvedState(),
   memo: null,
+  memoryWords: DEFAULT_MEMORY_WORDS,
 }
 
 function getInitialState(): CubeState {
@@ -62,6 +68,18 @@ function cubeReducer(state: CubeState, action: CubeAction): CubeState {
         memo,
       }
     }
+    case 'UPDATE_MEMORY_WORD': {
+      const { key, word } = action.payload
+      return {
+        ...state,
+        memoryWords: {
+          ...state.memoryWords,
+          [key]: word,
+        },
+      }
+    }
+    case 'RESET_MEMORY_WORDS':
+      return { ...state, memoryWords: DEFAULT_MEMORY_WORDS }
     default:
       return state
   }

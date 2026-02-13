@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useCubeContext } from '../hooks/useCubeContext'
 import { generateScramble } from '../utils/scramble'
 import EncodingPanel from './EncodingPanel'
+import { MemoryWordEditor } from './MemoryWordEditor'
+import { formatMemoWithWords } from '../types/memoryWord'
 
 export default function ControlPanel() {
   const { state, dispatch } = useCubeContext()
@@ -27,14 +29,15 @@ export default function ControlPanel() {
               <p className="text-gray-400 text-sm mb-1">記憶編碼：</p>
               <div className="space-y-1">
                 <p className="text-white font-mono text-sm">
-                  <span className="text-green-400">邊塊：</span> {state.memo.edges || '(已還原)'}
+                  <span className="text-green-400">邊塊：</span> {state.memo.edges ? formatMemoWithWords(state.memo.edges, state.memoryWords) : '(已還原)'}
                 </p>
                 <p className="text-white font-mono text-sm">
-                  <span className="text-blue-400">角塊：</span> {state.memo.corners || '(已還原)'}
+                  <span className="text-blue-400">角塊：</span> {state.memo.corners ? formatMemoWithWords(state.memo.corners, state.memoryWords) : '(已還原)'}
                 </p>
               </div>
             </div>
           )}
+          <MemoryWordEditor />
         </div>
       )}
       <div className="flex gap-4 justify-center">

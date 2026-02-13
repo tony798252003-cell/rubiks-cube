@@ -1,0 +1,152 @@
+.memory-word-section {
+  margin: 20px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.memory-word-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.memory-word-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.memory-word-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.memory-word-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.memory-word-actions button:hover {
+  background: #0056b3;
+}
+
+.memory-word-actions .reset-btn {
+  background: #dc3545;
+}
+
+.memory-word-actions .reset-btn:hover {
+  background: #c82333;
+}
+
+.memory-word-grid {
+  overflow-x: auto;
+  background: white;
+  border-radius: 4px;
+  padding: 10px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.grid-header {
+  display: flex;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+  border-bottom: 2px solid #dee2e6;
+  padding-bottom: 5px;
+}
+
+.corner-cell {
+  width: 40px;
+  flex-shrink: 0;
+  background: #f8f9fa;
+}
+
+.header-cell {
+  width: 80px;
+  flex-shrink: 0;
+  text-align: center;
+  font-weight: bold;
+  color: #495057;
+  padding: 5px;
+}
+
+.grid-row {
+  display: flex;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.row-header {
+  width: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #495057;
+  background: #f8f9fa;
+  position: sticky;
+  left: 0;
+  z-index: 5;
+}
+
+.memory-cell {
+  width: 80px;
+  flex-shrink: 0;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-right: 1px solid #e9ecef;
+}
+
+.memory-cell.empty .cell-word {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.cell-header {
+  font-size: 10px;
+  color: #6c757d;
+  text-align: center;
+}
+
+.cell-word {
+  font-size: 13px;
+  text-align: center;
+  padding: 4px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cell-word:hover {
+  background: #e9ecef;
+}
+
+.cell-input {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #007bff;
+  border-radius: 3px;
+  font-size: 13px;
+  text-align: center;
+  outline: none;
+}
+
+.cell-input:focus {
+  border-color: #0056b3;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}

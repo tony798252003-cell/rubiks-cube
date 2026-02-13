@@ -1,6 +1,7 @@
 import type { CubeState } from '../context/CubeContext'
 import { applyScramble, createSolvedState } from './cubeState'
 import { analyzeBlindsolve } from './blindsolve'
+import { DEFAULT_MEMORY_WORDS } from '../types/memoryWord'
 
 export const STORAGE_KEY = 'cubeTrainer'
 
@@ -31,6 +32,7 @@ export function loadFromStorage(): CubeState | null {
       currentScramble: scramble,
       cubeStickers: stickers,
       memo,
+      memoryWords: data.memoryWords ?? DEFAULT_MEMORY_WORDS,
     }
   } catch {
     return null
