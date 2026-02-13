@@ -1,25 +1,13 @@
 .memory-word-section {
-  margin: 20px 0;
-  padding: 20px;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.memory-word-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.memory-word-header h3 {
-  margin: 0;
-  color: #333;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .memory-word-actions {
   display: flex;
   gap: 10px;
+  justify-content: flex-end;
 }
 
 .memory-word-actions button {

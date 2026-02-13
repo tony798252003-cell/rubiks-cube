@@ -59,7 +59,7 @@ export const DEFAULT_ZHUYIN_ENCODING: CubeEncoding = {
     // F 面 (I-L)
     'UF-F': 'ㄒ', 'FR-F': 'ㄕ', 'DF-F': 'ㄉ', 'FL-F': 'ㄔ',
     // R 面 (M-P)
-    'UR-R': '', 'BR-R': '1', 'DR-R': 'ㄌ', 'FR-R': 'ㄙ',
+    'UR-R': '', 'BR-R': 'ㄗ', 'DR-R': '1', 'FR-R': 'ㄘ',
     // B 面 (Q-T)
     'UB-B': 'ㄐ', 'BL-B': 'ㄓ', 'DB-B': 'ㄋ', 'BR-B': 'ㄖ',
     // D 面 (U-X)

@@ -1,0 +1,251 @@
+.flashcard-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.flashcard-stats {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  font-size: 14px;
+  color: #666;
+  padding: 4px 8px;
+  background: white;
+  border-radius: 4px;
+}
+
+.stat-item.new {
+  color: #007bff;
+  font-weight: 500;
+}
+
+.stat-item.learning {
+  color: #ffc107;
+  font-weight: 500;
+}
+
+.stat-item.reviewing {
+  color: #28a745;
+  font-weight: 500;
+}
+
+.stat-item.due {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.start-practice-btn {
+  padding: 12px 24px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.start-practice-btn:hover:not(:disabled) {
+  background: #218838;
+}
+
+.start-practice-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.flashcard-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.flashcard-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.close-modal-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+  padding: 5px 10px;
+  line-height: 1;
+}
+
+.close-modal-btn:hover {
+  color: #333;
+}
+
+.flashcard-content {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 30px;
+}
+
+.flashcard-question {
+  text-align: center;
+}
+
+.flashcard-question h2 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.codes-display {
+  font-size: 48px;
+  font-weight: bold;
+  color: #007bff;
+  letter-spacing: 10px;
+  padding: 30px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin: 0 auto;
+  max-width: 300px;
+}
+
+.show-answer-btn {
+  padding: 15px 40px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin: 0 auto;
+  display: block;
+}
+
+.show-answer-btn:hover {
+  background: #0056b3;
+}
+
+.flashcard-answer {
+  text-align: center;
+  padding: 20px;
+  background: #e8f5e9;
+  border-radius: 8px;
+  border: 2px solid #4caf50;
+}
+
+.answer-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.answer-word {
+  font-size: 36px;
+  font-weight: bold;
+  color: #2e7d32;
+}
+
+.familiarity-buttons {
+  margin-top: 20px;
+}
+
+.familiarity-prompt {
+  text-align: center;
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.familiarity-btn {
+  flex: 1;
+  padding: 15px 10px;
+  border: 2px solid;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+}
+
+.interval-hint {
+  font-size: 11px;
+  font-weight: normal;
+  opacity: 0.8;
+}
+
+.familiarity-btn.unfamiliar {
+  background: white;
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.familiarity-btn.unfamiliar:hover {
+  background: #dc3545;
+  color: white;
+}
+
+.familiarity-btn.okay {
+  background: white;
+  border-color: #ffc107;
+  color: #856404;
+}
+
+.familiarity-btn.okay:hover {
+  background: #ffc107;
+  color: white;
+}
+
+.familiarity-btn.familiar {
+  background: white;
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.familiarity-btn.familiar:hover {
+  background: #28a745;
+  color: white;
+}
+
+.card-info {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #dee2e6;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #666;
+}

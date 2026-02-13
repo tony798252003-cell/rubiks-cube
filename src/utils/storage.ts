@@ -2,6 +2,7 @@ import type { CubeState } from '../context/CubeContext'
 import { applyScramble, createSolvedState } from './cubeState'
 import { analyzeBlindsolve } from './blindsolve'
 import { DEFAULT_MEMORY_WORDS } from '../types/memoryWord'
+import { initializeFlashcards } from '../types/flashcard'
 
 export const STORAGE_KEY = 'cubeTrainer'
 
@@ -26,13 +27,15 @@ export function loadFromStorage(): CubeState | null {
     const scramble = data.currentScramble ?? null
     const stickers = scramble ? applyScramble(scramble) : createSolvedState()
     const memo = scramble ? analyzeBlindsolve(stickers, data.encoding) : null
+    const memoryWords = data.memoryWords ?? DEFAULT_MEMORY_WORDS
     return {
       encoding: data.encoding,
       labelMode: data.labelMode ?? 'all',
       currentScramble: scramble,
       cubeStickers: stickers,
       memo,
-      memoryWords: data.memoryWords ?? DEFAULT_MEMORY_WORDS,
+      memoryWords,
+      flashcards: data.flashcards ?? initializeFlashcards(memoryWords),
     }
   } catch {
     return null

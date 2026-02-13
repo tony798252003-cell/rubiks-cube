@@ -1,14 +1,13 @@
 import { useState } from 'react'
 import { useCubeContext } from '../hooks/useCubeContext'
 import { generateScramble } from '../utils/scramble'
-import EncodingPanel from './EncodingPanel'
-import { MemoryWordEditor } from './MemoryWordEditor'
+import { FlashcardPractice } from './FlashcardPractice'
 import { formatMemoWithWords } from '../types/memoryWord'
 
 export default function ControlPanel() {
   const { state, dispatch } = useCubeContext()
-  const [showEncodingPanel, setShowEncodingPanel] = useState(false)
   const [showMemoryWords, setShowMemoryWords] = useState(true)
+  const [showFlashcardPractice, setShowFlashcardPractice] = useState(false)
 
   const handleGenerateScramble = () => {
     const scramble = generateScramble()
@@ -17,7 +16,19 @@ export default function ControlPanel() {
 
   return (
     <>
-    <EncodingPanel isOpen={showEncodingPanel} onClose={() => setShowEncodingPanel(false)} />
+    {/* 記憶練習 Modal */}
+    {showFlashcardPractice && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowFlashcardPractice(false)}>
+        <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-gray-800">記憶練習</h2>
+            <button onClick={() => setShowFlashcardPractice(false)} className="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+          </div>
+          <FlashcardPractice />
+        </div>
+      </div>
+    )}
+
     <div className="bg-gray-800 p-4 flex-shrink-0">
       {state.currentScramble && (
         <div className="mb-4 space-y-3 max-w-2xl mx-auto">
@@ -46,10 +57,9 @@ export default function ControlPanel() {
               </div>
             </div>
           )}
-          <MemoryWordEditor />
         </div>
       )}
-      <div className="flex gap-4 justify-center">
+      <div className="flex gap-4 justify-center flex-wrap">
         <button
           onClick={() => dispatch({ type: 'CYCLE_LABEL_MODE' })}
           className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition"
@@ -65,10 +75,10 @@ export default function ControlPanel() {
           生成打亂
         </button>
         <button
-          onClick={() => setShowEncodingPanel(true)}
-          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded transition"
+          onClick={() => setShowFlashcardPractice(true)}
+          className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded transition"
         >
-          編碼設定
+          記憶練習
         </button>
       </div>
     </div>

@@ -68,7 +68,6 @@ function MemoryWordCell({ code1, code2 }: MemoryWordCellProps) {
 
 export function MemoryWordEditor() {
   const { dispatch } = useCubeContext()
-  const [showModal, setShowModal] = useState(false)
 
   const handleReset = () => {
     if (window.confirm('確定要重置所有記憶字到預設值嗎？')) {
@@ -78,38 +77,28 @@ export function MemoryWordEditor() {
 
   return (
     <div className="memory-word-section">
-      <div className="memory-word-header">
-        <h3>記憶字編輯器</h3>
-        <div className="memory-word-actions">
-          <button onClick={() => setShowModal(!showModal)}>
-            {showModal ? '收起' : '展開'}編輯器
-          </button>
-          {showModal && (
-            <button onClick={handleReset} className="reset-btn">
-              重置為預設
-            </button>
-          )}
-        </div>
+      <div className="memory-word-actions">
+        <button onClick={handleReset} className="reset-btn">
+          重置為預設
+        </button>
       </div>
 
-      {showModal && (
-        <div className="memory-word-grid">
-          <div className="grid-header">
-            <div className="corner-cell"></div>
-            {ALL_CODES.map(code => (
-              <div key={code} className="header-cell">{code}</div>
-            ))}
-          </div>
-          {ALL_CODES.map(code1 => (
-            <div key={code1} className="grid-row">
-              <div className="row-header">{code1}</div>
-              {ALL_CODES.map(code2 => (
-                <MemoryWordCell key={`${code1}-${code2}`} code1={code1} code2={code2} />
-              ))}
-            </div>
+      <div className="memory-word-grid">
+        <div className="grid-header">
+          <div className="corner-cell"></div>
+          {ALL_CODES.map(code => (
+            <div key={code} className="header-cell">{code}</div>
           ))}
         </div>
-      )}
+        {ALL_CODES.map(code1 => (
+          <div key={code1} className="grid-row">
+            <div className="row-header">{code1}</div>
+            {ALL_CODES.map(code2 => (
+              <MemoryWordCell key={`${code1}-${code2}`} code1={code1} code2={code2} />
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
