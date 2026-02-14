@@ -78,7 +78,7 @@ export const DEFAULT_PARAMETERS: FSRSParameters = {
 
 // 學習步驟（分鐘）
 export const LEARNING_STEPS = [1, 10]  // 1分鐘，10分鐘
-export const RELEARNING_STEPS = [10]   // 重新學習：10分鐘
+export const RELEARNING_STEPS = [1]   // 重新學習：1分鐘
 
 // ==================== 核心算法函數 ====================
 

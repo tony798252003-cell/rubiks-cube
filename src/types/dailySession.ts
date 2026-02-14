@@ -250,18 +250,36 @@ export function select_next_card(
     }
   }
 
-  // 2. 返回學習隊列中到期的卡片
-  const learning_cards = get_due_cards(cards, now).filter(
-    c => (c.state === 'learning' || c.state === 'relearning') &&
-         session.is_in_learning_queue(c.id)
-  )
-  if (learning_cards.length > 0) {
-    // 按照到期時間排序
-    learning_cards.sort((a, b) => a.due.getTime() - b.due.getTime())
-    return {
-      card: learning_cards[0],
-      reason: 'learning',
-      message: `學習隊列中的卡片（還有 ${learning_cards.length - 1} 張）`
+  // 2. 返回學習隊列中到期的卡片（如果還能學習新卡片）
+  if (session.can_learn_new_cards()) {
+    const learning_cards = get_due_cards(cards, now).filter(
+      c => (c.state === 'learning' || c.state === 'relearning') &&
+           session.is_in_learning_queue(c.id)
+    )
+    if (learning_cards.length > 0) {
+      // 按照到期時間排序
+      learning_cards.sort((a, b) => a.due.getTime() - b.due.getTime())
+      return {
+        card: learning_cards[0],
+        reason: 'learning',
+        message: `學習隊列中的卡片（還有 ${learning_cards.length - 1} 張）`
+      }
+    }
+  }
+
+  // 2.5. 如果新卡片已經用完，返回學習隊列中的所有卡片（不檢查 due）
+  if (!session.can_learn_new_cards()) {
+    const learning_cards = get_learning_cards(cards).filter(
+      c => session.is_in_learning_queue(c.id)
+    )
+    if (learning_cards.length > 0) {
+      // 按照到期時間排序，但不過濾未到期的
+      learning_cards.sort((a, b) => a.due.getTime() - b.due.getTime())
+      return {
+        card: learning_cards[0],
+        reason: 'learning',
+        message: `學習隊列中的卡片（還有 ${learning_cards.length - 1} 張）`
+      }
     }
   }
 
@@ -292,12 +310,6 @@ export function select_next_card(
       card: null,
       reason: 'none',
       message: '🎉 今日學習完成！明天見！'
-    }
-  } else if (!session.can_learn_new_cards() && learning_cards.length === 0) {
-    return {
-      card: null,
-      reason: 'none',
-      message: '今日新卡片已學完，請稍後復習學習隊列中的卡片'
     }
   } else {
     return {
