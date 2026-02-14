@@ -88,8 +88,11 @@ export function FlashcardPractice() {
     )
     setLocalCards(newLocalCards)
 
-    // 更新會話狀態
-    if (selectionResult.reason === 'review') {
+    // 記錄學習狀態
+    if (selectionResult.reason === 'new') {
+      // 首次學習新卡片時記錄
+      localSession.record_new_card_learned(selectionResult.card.id)
+    } else if (selectionResult.reason === 'review') {
       localSession.record_review()
     }
 
@@ -181,18 +184,19 @@ export function FlashcardPractice() {
 
   return (
     <div>
+      {/* 統計信息 - 始終顯示 */}
       <div className="flashcard-header">
         <div className="flashcard-stats">
           <span className="stat-item">總計: {localCards.length}</span>
           <span className="stat-item new">
-            新卡片: {stats.new_cards_today}/{stats.new_cards_today + stats.new_cards_remaining}
+            今天: {stats.new_cards_today}/{stats.new_cards_today + stats.new_cards_remaining}
           </span>
           <span className="stat-item learning">學習中: {stats.learning_count}</span>
-          <span className="stat-item reviewing">復習: {stats.total_review}</span>
           <span className="stat-item due">待復習: {stats.due_count}</span>
         </div>
       </div>
 
+      {/* 完成提示 */}
       {stats.completed_today && (
         <div style={{
           padding: '20px',
@@ -211,6 +215,7 @@ export function FlashcardPractice() {
         </div>
       )}
 
+      {/* 開始按鈕 */}
       <button
         onClick={startPractice}
         className="start-practice-btn"
@@ -221,14 +226,44 @@ export function FlashcardPractice() {
           : stats.learning_count > 0
           ? `繼續學習 (${stats.learning_count} 張)`
           : stats.new_count > 0
-          ? `學習新卡片 (${stats.new_cards_today}/${stats.new_cards_today + stats.new_cards_remaining})`
+          ? `學習新卡片 (還剩 ${stats.new_cards_remaining} 張)`
           : '今日學習完成'}
       </button>
 
+      {/* 卡片練習模態窗口 */}
       {showModal && selectionResult?.card && schedulingCards && (
         <div className="flashcard-modal-overlay" onClick={closeModal}>
           <div className="flashcard-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="close-modal-btn" onClick={closeModal}>✕</button>
+            {/* 頂部統計條 - 練習時始終可見 */}
+            <div style={{
+              position: 'sticky',
+              top: 0,
+              background: 'rgba(30, 41, 59, 0.95)',
+              backdropFilter: 'blur(10px)',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+              padding: '12px 16px',
+              marginBottom: '20px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              borderRadius: '12px 12px 0 0',
+              zIndex: 10
+            }}>
+              <div style={{ display: 'flex', gap: '12px', fontSize: '13px', flexWrap: 'wrap' }}>
+                <span style={{ color: '#93c5fd' }}>📝 今天: {stats.new_cards_today}/{stats.new_cards_today + stats.new_cards_remaining}</span>
+                <span style={{ color: '#fcd34d' }}>📖 學習中: {stats.learning_count}</span>
+                <span style={{ color: '#fca5a5' }}>⏰ 待復習: {stats.due_count}</span>
+              </div>
+              <button onClick={closeModal} style={{
+                background: 'none',
+                border: 'none',
+                color: '#9ca3af',
+                fontSize: '24px',
+                cursor: 'pointer',
+                padding: '0 8px',
+                lineHeight: 1
+              }}>✕</button>
+            </div>
 
             <div className="flashcard-content">
               {/* 卡片信息 */}
@@ -240,7 +275,7 @@ export function FlashcardPractice() {
               }}>
                 {selectionResult.reason === 'review' && '📚 復習'}
                 {selectionResult.reason === 'learning' && '📖 學習中'}
-                {selectionResult.reason === 'new' && `✨ 新卡片 (${stats.new_cards_today}/10)`}
+                {selectionResult.reason === 'new' && `✨ 新卡片`}
                 {' · '}
                 {selectionResult.card.state === 'new' && '首次學習'}
                 {selectionResult.card.state === 'learning' && '學習階段'}

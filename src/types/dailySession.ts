@@ -11,6 +11,7 @@ export interface DailySession {
   new_cards_limit: number        // 每日新卡片上限（默認10）
   reviews_completed: number       // 今天完成的復習數
   learning_queue: string[]        // 當前學習隊列中的卡片ID
+  introduced_cards: string[]      // 今天已經介紹過的新卡片ID（防止重複）
   session_start: number          // 會話開始時間戳
 }
 
@@ -38,6 +39,11 @@ export class SessionManager {
     if (this.session.date !== today) {
       this.reset_for_new_day(today)
     }
+
+    // 確保 introduced_cards 存在（向後兼容）
+    if (!this.session.introduced_cards) {
+      this.session.introduced_cards = []
+    }
   }
 
   /**
@@ -53,8 +59,12 @@ export class SessionManager {
   get_daily_stats(cards: FSRSCard[]): DailyStats {
     const now = new Date()
     const due_cards = get_due_cards(cards, now)
-    const learning_cards = get_learning_cards(cards)
-    const new_cards = get_new_cards(cards)
+    const learning_cards = get_learning_cards(cards).filter(c =>
+      this.session.learning_queue.includes(c.id)
+    )
+    const new_cards = get_new_cards(cards).filter(c =>
+      !this.session.introduced_cards.includes(c.id)
+    )
     const review_cards = cards.filter(c => c.state === 'review')
 
     const new_cards_remaining = Math.max(
@@ -81,10 +91,16 @@ export class SessionManager {
   }
 
   /**
-   * 記錄學習了一張新卡片
+   * 記錄學習了一張新卡片（在用戶首次回答後調用）
    */
-  record_new_card(card_id: string): void {
-    this.session.new_cards_today += 1
+  record_new_card_learned(card_id: string): void {
+    // 標記為已介紹
+    if (!this.session.introduced_cards.includes(card_id)) {
+      this.session.introduced_cards.push(card_id)
+      this.session.new_cards_today += 1
+    }
+
+    // 加入學習隊列
     this.add_to_learning_queue(card_id)
   }
 
@@ -125,6 +141,13 @@ export class SessionManager {
    */
   can_learn_new_cards(): boolean {
     return this.session.new_cards_today < this.session.new_cards_limit
+  }
+
+  /**
+   * 檢查卡片是否已經被介紹過（今天）
+   */
+  is_card_introduced(card_id: string): boolean {
+    return this.session.introduced_cards.includes(card_id)
   }
 
   /**
@@ -170,6 +193,7 @@ export class SessionManager {
       new_cards_limit: 10,
       reviews_completed: 0,
       learning_queue: [],
+      introduced_cards: [],
       session_start: Date.now()
     }
   }
@@ -181,7 +205,8 @@ export class SessionManager {
       new_cards_today: 0,
       new_cards_limit: this.session.new_cards_limit,
       reviews_completed: 0,
-      learning_queue: [],  // 新的一天，清空學習隊列
+      learning_queue: [],
+      introduced_cards: [],
       session_start: Date.now()
     }
   }
@@ -203,6 +228,9 @@ export interface CardSelectionResult {
 /**
  * 智能選擇下一張需要學習的卡片
  * 優先級：復習到期 > 學習隊列 > 新卡片
+ *
+ * 重要：這個函數只選擇卡片，不記錄狀態！
+ * 狀態記錄在用戶回答後進行。
  */
 export function select_next_card(
   cards: FSRSCard[],
@@ -237,21 +265,21 @@ export function select_next_card(
     }
   }
 
-  // 3. 如果還能學習新卡片，返回新卡片
+  // 3. 如果還能學習新卡片，返回新卡片（但不記錄！）
   if (session.can_learn_new_cards()) {
-    const new_cards = get_new_cards(cards)
+    const new_cards = get_new_cards(cards).filter(c =>
+      !session.is_card_introduced(c.id)
+    )
+
     if (new_cards.length > 0) {
       // 隨機選擇一張新卡片（避免總是按相同順序）
       const random_index = Math.floor(Math.random() * new_cards.length)
       const selected = new_cards[random_index]
 
-      // 記錄這張新卡片
-      session.record_new_card(selected.id)
-
       return {
         card: selected,
         reason: 'new',
-        message: `新卡片 ${session.get_session().new_cards_today}/${session.get_session().new_cards_limit}`
+        message: `新卡片 ${session.get_session().new_cards_today + 1}/${session.get_session().new_cards_limit}`
       }
     }
   }

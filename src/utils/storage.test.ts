@@ -14,6 +14,7 @@ function createDefaultSession() {
     new_cards_limit: 10,
     reviews_completed: 0,
     learning_queue: [],
+    introduced_cards: [],
     session_start: Date.now()
   }
 }
