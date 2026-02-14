@@ -4,10 +4,15 @@ import ControlPanel from './components/ControlPanel'
 import { SettingsMenu } from './components/SettingsMenu'
 import { useEffect } from 'react'
 import { initializeCubeEngine } from './utils/cubeState'
+import { initializeStorage } from './utils/storage'
 
 function App() {
   useEffect(() => {
     initializeCubeEngine()
+    // 初始化存儲系統（IndexedDB 或 localStorage）
+    initializeStorage().then(storageType => {
+      console.log(`Storage initialized: ${storageType}`)
+    })
   }, [])
 
   return (

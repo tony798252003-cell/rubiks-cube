@@ -222,6 +222,13 @@
   justify-content: center;
 }
 
+.button-group-four {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  justify-content: center;
+}
+
 .familiarity-btn {
   flex: 1;
   padding: 20px 12px;
@@ -256,6 +263,20 @@
   color: white;
   transform: translateY(-4px);
   box-shadow: 0 12px 32px rgba(239, 68, 68, 0.3);
+}
+
+.familiarity-btn.hard {
+  background: rgba(249, 115, 22, 0.1);
+  border-color: rgba(249, 115, 22, 0.5);
+  color: #fdba74;
+}
+
+.familiarity-btn.hard:hover {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  border-color: #f97316;
+  color: white;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(249, 115, 22, 0.3);
 }
 
 .familiarity-btn.okay {

@@ -1,10 +1,13 @@
-import { createContext, useReducer, useEffect, ReactNode } from 'react'
+import { createContext, useReducer, useEffect, useState, ReactNode } from 'react'
 import type { CubeEncoding } from '../types/encoding'
 import { DEFAULT_ZHUYIN_ENCODING } from '../types/encoding'
 import type { MemoryWordDict } from '../types/memoryWord'
 import { DEFAULT_MEMORY_WORDS } from '../types/memoryWord'
 import type { FlashcardDeck, Flashcard } from '../types/flashcard'
 import { initializeFlashcards } from '../types/flashcard'
+import type { FSRSCard } from '../types/fsrs'
+import type { DailySession } from '../types/dailySession'
+import { initializeFSRSCards } from '../types/fsrsMigration'
 import { saveToStorage, loadFromStorage } from '../utils/storage'
 import { applyScramble, createSolvedState, type CubeState as CubeStickers } from '../utils/cubeState'
 import { analyzeBlindsolve } from '../utils/blindsolve'
@@ -18,7 +21,9 @@ export interface CubeState {
   cubeStickers: CubeStickers
   memo: { edges: string; corners: string } | null
   memoryWords: MemoryWordDict
-  flashcards: FlashcardDeck
+  flashcards: FlashcardDeck  // 保留用於向後兼容
+  fsrsCards: FSRSCard[]      // 新的 FSRS 系統
+  dailySession: DailySession // 每日學習會話
 }
 
 export type CubeAction =
@@ -30,6 +35,21 @@ export type CubeAction =
   | { type: 'RESET_MEMORY_WORDS' }
   | { type: 'UPDATE_FLASHCARD'; payload: Flashcard }
   | { type: 'INIT_FLASHCARDS' }
+  | { type: 'UPDATE_FSRS_CARD'; payload: FSRSCard }
+  | { type: 'UPDATE_DAILY_SESSION'; payload: DailySession }
+  | { type: 'INIT_FSRS_CARDS' }
+
+function createDefaultSession(): DailySession {
+  const today = new Date().toISOString().split('T')[0]
+  return {
+    date: today,
+    new_cards_today: 0,
+    new_cards_limit: 10,
+    reviews_completed: 0,
+    learning_queue: [],
+    session_start: Date.now()
+  }
+}
 
 const defaultState: CubeState = {
   encoding: DEFAULT_ZHUYIN_ENCODING,
@@ -39,10 +59,14 @@ const defaultState: CubeState = {
   memo: null,
   memoryWords: DEFAULT_MEMORY_WORDS,
   flashcards: initializeFlashcards(DEFAULT_MEMORY_WORDS),
+  fsrsCards: initializeFSRSCards(DEFAULT_MEMORY_WORDS),
+  dailySession: createDefaultSession(),
 }
 
 function getInitialState(): CubeState {
-  return loadFromStorage() ?? defaultState
+  // loadFromStorage 是異步的，但 useReducer 的 init 必須是同步的
+  // 所以這裡先返回默認狀態，然後在 CubeProvider 中異步加載
+  return defaultState
 }
 
 function cubeReducer(state: CubeState, action: CubeAction): CubeState {
@@ -132,6 +156,27 @@ function cubeReducer(state: CubeState, action: CubeAction): CubeState {
         ...state,
         flashcards: initializeFlashcards(state.memoryWords),
       }
+    case 'UPDATE_FSRS_CARD': {
+      const updatedCard = action.payload
+      const updatedCards = state.fsrsCards.map(card =>
+        card.id === updatedCard.id ? updatedCard : card
+      )
+      return {
+        ...state,
+        fsrsCards: updatedCards,
+      }
+    }
+    case 'UPDATE_DAILY_SESSION':
+      return {
+        ...state,
+        dailySession: action.payload,
+      }
+    case 'INIT_FSRS_CARDS':
+      return {
+        ...state,
+        fsrsCards: initializeFSRSCards(state.memoryWords),
+        dailySession: createDefaultSession(),
+      }
     default:
       return state
   }
@@ -146,7 +191,26 @@ export const CubeContext = createContext<CubeContextValue | undefined>(undefined
 
 export function CubeProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cubeReducer, undefined, getInitialState)
-  useEffect(() => { saveToStorage(state) }, [state])
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  // 初次加載時從存儲讀取數據
+  useEffect(() => {
+    loadFromStorage().then(loaded => {
+      if (loaded) {
+        // 用加載的數據替換默認狀態（通過直接設置）
+        Object.assign(state, loaded)
+      }
+      setIsLoaded(true)
+    })
+  }, [])
+
+  // 保存狀態變更
+  useEffect(() => {
+    if (isLoaded) {
+      saveToStorage(state)
+    }
+  }, [state, isLoaded])
+
   return (
     <CubeContext.Provider value={{ state, dispatch }}>
       {children}
