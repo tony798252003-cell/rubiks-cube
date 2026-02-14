@@ -59,6 +59,23 @@ export function FlashcardPractice() {
     }
   }, [localCards, localSession, fsrs])
 
+  // 再背 10 題
+  const learnMore = useCallback(() => {
+    if (!localSession) return
+
+    const currentLimit = localSession.get_session().new_cards_limit
+    localSession.set_new_cards_limit(currentLimit + 10)
+
+    // 更新全局狀態
+    dispatch({
+      type: 'UPDATE_DAILY_SESSION',
+      payload: localSession.get_session()
+    })
+
+    // 立即開始練習
+    startPractice()
+  }, [localSession, dispatch, startPractice])
+
   // 處理評分
   const handleRating = useCallback((rating: Rating) => {
     if (!selectionResult?.card || !schedulingCards || !localSession) return
@@ -167,9 +184,14 @@ export function FlashcardPractice() {
       const diff = card.due.getTime() - now.getTime()
       const minutes = Math.max(1, Math.round(diff / (1000 * 60)))
       interval = `${minutes}分鐘`
-    } else {
+    } else if (card.scheduled_days > 0) {
       // 復習階段，顯示天數
       interval = format_interval(card.scheduled_days)
+    } else {
+      // 新卡片，顯示預設值
+      interval = rating === 1 ? '1分鐘' :
+                 rating === 2 ? '1分鐘' :
+                 rating === 3 ? '1天' : '4天'
     }
 
     return {
@@ -210,7 +232,51 @@ export function FlashcardPractice() {
           <div style={{ fontSize: '48px', marginBottom: '10px' }}>🎉</div>
           <div style={{ fontSize: '18px', fontWeight: 'bold' }}>今日學習完成！</div>
           <div style={{ fontSize: '14px', marginTop: '8px', opacity: 0.8 }}>
-            明天見！繼續保持！
+            已完成 {stats.new_cards_today} 張新卡片
+          </div>
+          <button
+            onClick={learnMore}
+            style={{
+              marginTop: '16px',
+              padding: '12px 24px',
+              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+              border: 'none',
+              borderRadius: '12px',
+              color: 'white',
+              fontSize: '14px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.3s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)'
+              e.currentTarget.style.boxShadow = '0 8px 16px rgba(59, 130, 246, 0.4)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = 'none'
+            }}
+          >
+            📚 再背 10 題
+          </button>
+        </div>
+      )}
+
+      {/* 學習未完成提示 */}
+      {!stats.completed_today && stats.new_cards_remaining === 0 && stats.learning_count > 0 && (
+        <div style={{
+          padding: '16px',
+          marginBottom: '16px',
+          background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.2))',
+          border: '2px solid rgba(251, 191, 36, 0.3)',
+          borderRadius: '16px',
+          textAlign: 'center',
+          color: '#fcd34d'
+        }}>
+          <div style={{ fontSize: '36px', marginBottom: '8px' }}>📖</div>
+          <div style={{ fontSize: '16px', fontWeight: 'bold' }}>還有 {stats.learning_count} 張卡片需要複習</div>
+          <div style={{ fontSize: '13px', marginTop: '6px', opacity: 0.9 }}>
+            確保所有卡片都至少達到「有點難」才能完成今日學習
           </div>
         </div>
       )}
