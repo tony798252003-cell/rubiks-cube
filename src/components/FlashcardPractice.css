@@ -96,13 +96,15 @@
 .flashcard-modal {
   background: white;
   border-radius: 12px;
-  padding: 30px;
+  padding: 0;
   max-width: 600px;
   width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
+  max-height: 95vh;
+  display: flex;
+  flex-direction: column;
   position: relative;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
 }
 
 .close-modal-btn {
@@ -123,11 +125,13 @@
 }
 
 .flashcard-content {
-  min-height: 300px;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 30px;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  overflow-y: auto;
 }
 
 .flashcard-question {
@@ -135,36 +139,36 @@
 }
 
 .flashcard-question h2 {
-  font-size: 20px;
+  font-size: 16px;
   color: #333;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .codes-display {
-  font-size: 56px;
+  font-size: 48px;
   font-weight: bold;
   background: linear-gradient(135deg, #3b82f6, #8b5cf6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  letter-spacing: 16px;
-  padding: 40px;
+  letter-spacing: 12px;
+  padding: 24px 20px;
   background-color: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
+  border-radius: 16px;
   margin: 0 auto;
-  max-width: 350px;
+  max-width: 300px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .show-answer-btn {
-  padding: 16px 48px;
+  padding: 14px 40px;
   background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: white;
   border: none;
-  border-radius: 16px;
-  font-size: 18px;
+  border-radius: 14px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
@@ -181,10 +185,10 @@
 
 .flashcard-answer {
   text-align: center;
-  padding: 32px;
+  padding: 20px 16px;
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
   backdrop-filter: blur(10px);
-  border-radius: 20px;
+  border-radius: 16px;
   border: 2px solid rgba(16, 185, 129, 0.3);
   box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2);
 }
@@ -197,7 +201,7 @@
 }
 
 .answer-word {
-  font-size: 42px;
+  font-size: 36px;
   font-weight: bold;
   background: linear-gradient(135deg, #10b981, #059669);
   -webkit-background-clip: text;
@@ -206,14 +210,14 @@
 }
 
 .familiarity-buttons {
-  margin-top: 20px;
+  margin-top: 12px;
 }
 
 .familiarity-prompt {
   text-align: center;
-  font-size: 16px;
+  font-size: 14px;
   color: #666;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .button-group {
@@ -231,16 +235,16 @@
 
 .familiarity-btn {
   flex: 1;
-  padding: 20px 12px;
+  padding: 14px 10px;
   border: 2px solid;
-  border-radius: 16px;
-  font-size: 16px;
+  border-radius: 12px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   align-items: center;
   backdrop-filter: blur(10px);
 }
@@ -308,11 +312,82 @@
 }
 
 .card-info {
-  margin-top: 20px;
-  padding-top: 15px;
+  margin-top: 12px;
+  padding: 12px 20px;
   border-top: 1px solid #dee2e6;
   display: flex;
   justify-content: space-between;
-  font-size: 14px;
+  font-size: 12px;
   color: #666;
+  flex-shrink: 0;
+}
+
+/* 手機優化 */
+@media (max-width: 640px) {
+  .flashcard-modal {
+    width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .flashcard-content {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .flashcard-question h2 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .codes-display {
+    font-size: 40px;
+    letter-spacing: 10px;
+    padding: 20px 16px;
+    border-radius: 12px;
+  }
+
+  .flashcard-answer {
+    padding: 16px 12px;
+  }
+
+  .answer-word {
+    font-size: 32px;
+  }
+
+  .show-answer-btn {
+    padding: 12px 32px;
+    font-size: 15px;
+  }
+
+  .familiarity-buttons {
+    margin-top: 8px;
+  }
+
+  .familiarity-prompt {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  .button-group-four {
+    gap: 8px;
+  }
+
+  .familiarity-btn {
+    padding: 12px 8px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+
+  .interval-hint {
+    font-size: 10px;
+  }
+
+  .card-info {
+    margin-top: 8px;
+    padding: 10px 16px;
+    font-size: 11px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 }

@@ -307,15 +307,15 @@ export function FlashcardPractice() {
               background: 'rgba(30, 41, 59, 0.95)',
               backdropFilter: 'blur(10px)',
               borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-              padding: '12px 16px',
-              marginBottom: '20px',
+              padding: '10px 16px',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
               borderRadius: '12px 12px 0 0',
-              zIndex: 10
+              zIndex: 10,
+              flexShrink: 0
             }}>
-              <div style={{ display: 'flex', gap: '12px', fontSize: '13px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '8px', fontSize: '12px', flexWrap: 'wrap' }}>
                 <span style={{ color: '#93c5fd' }}>📝 今天: {stats.new_cards_today}/{stats.new_cards_today + stats.new_cards_remaining}</span>
                 <span style={{ color: '#fcd34d' }}>📖 學習中: {stats.learning_count}</span>
                 <span style={{ color: '#fca5a5' }}>⏰ 待復習: {stats.due_count}</span>
@@ -324,9 +324,9 @@ export function FlashcardPractice() {
                 background: 'none',
                 border: 'none',
                 color: '#9ca3af',
-                fontSize: '24px',
+                fontSize: '20px',
                 cursor: 'pointer',
-                padding: '0 8px',
+                padding: '0 4px',
                 lineHeight: 1
               }}>✕</button>
             </div>
@@ -334,10 +334,11 @@ export function FlashcardPractice() {
             <div className="flashcard-content">
               {/* 卡片信息 */}
               <div style={{
-                fontSize: '13px',
+                fontSize: '12px',
                 color: 'rgba(255, 255, 255, 0.6)',
-                marginBottom: '10px',
-                textAlign: 'center'
+                marginBottom: '8px',
+                textAlign: 'center',
+                flexShrink: 0
               }}>
                 {selectionResult.reason === 'review' && '📚 復習'}
                 {selectionResult.reason === 'learning' && '📖 學習中'}
