@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { useCubeContext } from '../hooks/useCubeContext'
-import { FSRS, Rating, SchedulingCards, format_interval } from '../types/fsrs'
+import { FSRS, Rating, SchedulingCards, format_interval, FSRSCard } from '../types/fsrs'
 import { SessionManager, select_next_card, CardSelectionResult } from '../types/dailySession'
 import './FlashcardPractice.css'
 
@@ -11,22 +11,39 @@ export function FlashcardPractice() {
   const [showAnswer, setShowAnswer] = useState(false)
   const [schedulingCards, setSchedulingCards] = useState<SchedulingCards | null>(null)
 
+  // 本地維護卡片列表和會話管理器
+  const [localCards, setLocalCards] = useState<FSRSCard[]>([])
+  const [localSession, setLocalSession] = useState<SessionManager | null>(null)
+
   // 初始化 FSRS 和 SessionManager
   const fsrs = useMemo(() => new FSRS(), [])
-  const sessionManager = useMemo(
-    () => new SessionManager(state.dailySession),
-    [state.dailySession]
-  )
 
-  // 計算統計
-  const stats = useMemo(
-    () => sessionManager.get_daily_stats(state.fsrsCards),
-    [state.fsrsCards, sessionManager]
-  )
+  // 當 state 變化時，同步到本地
+  useEffect(() => {
+    setLocalCards(state.fsrsCards)
+    setLocalSession(new SessionManager(state.dailySession))
+  }, [state.fsrsCards, state.dailySession])
+
+  // 計算統計（使用本地狀態）
+  const stats = useMemo(() => {
+    if (!localSession) return {
+      due_count: 0,
+      new_count: 0,
+      learning_count: 0,
+      total_new: 0,
+      total_review: 0,
+      new_cards_today: 0,
+      new_cards_remaining: 0,
+      completed_today: false
+    }
+    return localSession.get_daily_stats(localCards)
+  }, [localCards, localSession])
 
   // 開始練習
-  const startPractice = () => {
-    const result = select_next_card(state.fsrsCards, sessionManager)
+  const startPractice = useCallback(() => {
+    if (!localSession) return
+
+    const result = select_next_card(localCards, localSession)
     setSelectionResult(result)
 
     if (result.card) {
@@ -40,11 +57,11 @@ export function FlashcardPractice() {
       // 沒有卡片可學習，顯示提示
       alert(result.message)
     }
-  }
+  }, [localCards, localSession, fsrs])
 
   // 處理評分
-  const handleRating = (rating: Rating) => {
-    if (!selectionResult?.card || !schedulingCards) return
+  const handleRating = useCallback((rating: Rating) => {
+    if (!selectionResult?.card || !schedulingCards || !localSession) return
 
     // 根據評分選擇對應的排程結果
     let selectedScheduling
@@ -65,33 +82,38 @@ export function FlashcardPractice() {
 
     const updatedCard = selectedScheduling.card
 
+    // 更新本地卡片列表
+    const newLocalCards = localCards.map(card =>
+      card.id === updatedCard.id ? updatedCard : card
+    )
+    setLocalCards(newLocalCards)
+
     // 更新會話狀態
     if (selectionResult.reason === 'review') {
-      sessionManager.record_review()
+      localSession.record_review()
     }
 
     // 如果卡片畢業到 review 狀態，從學習隊列移除
     if (updatedCard.state === 'review') {
-      sessionManager.remove_from_learning_queue(updatedCard.id)
+      localSession.remove_from_learning_queue(updatedCard.id)
     } else if (updatedCard.state === 'learning' || updatedCard.state === 'relearning') {
-      sessionManager.add_to_learning_queue(updatedCard.id)
+      localSession.add_to_learning_queue(updatedCard.id)
     }
 
-    // 更新卡片到 state
+    // 更新到全局 state
     dispatch({
       type: 'UPDATE_FSRS_CARD',
       payload: updatedCard
     })
 
-    // 更新會話
     dispatch({
       type: 'UPDATE_DAILY_SESSION',
-      payload: sessionManager.get_session()
+      payload: localSession.get_session()
     })
 
-    // 短暫延遲後選擇下一張卡片
+    // 使用更新後的本地狀態選擇下一張卡片
     setTimeout(() => {
-      const nextResult = select_next_card(state.fsrsCards, sessionManager)
+      const nextResult = select_next_card(newLocalCards, localSession)
       setSelectionResult(nextResult)
 
       if (nextResult.card) {
@@ -105,7 +127,7 @@ export function FlashcardPractice() {
         alert(nextResult.message)
       }
     }, 300)
-  }
+  }, [selectionResult, schedulingCards, localCards, localSession, dispatch, fsrs])
 
   const closeModal = () => {
     setShowModal(false)
@@ -153,13 +175,17 @@ export function FlashcardPractice() {
     }
   }
 
+  if (!localSession) {
+    return <div>載入中...</div>
+  }
+
   return (
     <div>
       <div className="flashcard-header">
         <div className="flashcard-stats">
-          <span className="stat-item">總計: {state.fsrsCards.length}</span>
+          <span className="stat-item">總計: {localCards.length}</span>
           <span className="stat-item new">
-            新卡片: {stats.new_cards_today}/{stats.new_cards_remaining + stats.new_cards_today}
+            新卡片: {stats.new_cards_today}/{stats.new_cards_today + stats.new_cards_remaining}
           </span>
           <span className="stat-item learning">學習中: {stats.learning_count}</span>
           <span className="stat-item reviewing">復習: {stats.total_review}</span>
@@ -214,7 +240,7 @@ export function FlashcardPractice() {
               }}>
                 {selectionResult.reason === 'review' && '📚 復習'}
                 {selectionResult.reason === 'learning' && '📖 學習中'}
-                {selectionResult.reason === 'new' && '✨ 新卡片'}
+                {selectionResult.reason === 'new' && `✨ 新卡片 (${stats.new_cards_today}/10)`}
                 {' · '}
                 {selectionResult.card.state === 'new' && '首次學習'}
                 {selectionResult.card.state === 'learning' && '學習階段'}
