@@ -208,6 +208,8 @@ export function next_stability_from_review(
 
 /**
  * 計算下次復習間隔（天數）
+ * 公式：interval = S * (R^(1/D) - 1)
+ * 其中 S = stability, R = request_retention, D = decay (w[10])
  */
 export function next_interval(s: number, request_retention: number, w: number[]): number {
   // 驗證輸入
@@ -215,19 +217,20 @@ export function next_interval(s: number, request_retention: number, w: number[])
     console.error('Invalid stability in next_interval:', s)
     return 1
   }
-  if (typeof w[19] !== 'number' || isNaN(w[19]) || w[19] === 0 || !isFinite(w[19])) {
-    console.error('Invalid w[19] in next_interval:', w[19])
-    return 1
-  }
   if (typeof w[10] !== 'number' || isNaN(w[10]) || w[10] === 0 || !isFinite(w[10])) {
     console.error('Invalid w[10] in next_interval:', w[10])
     return 1
   }
+  if (typeof request_retention !== 'number' || isNaN(request_retention) || request_retention <= 0 || request_retention >= 1) {
+    console.error('Invalid request_retention in next_interval:', request_retention)
+    request_retention = 0.9
+  }
 
-  const new_interval = s / w[19] * (Math.pow(request_retention, 1 / w[10]) - 1)
+  // FSRS 間隔公式：interval = S * (R^(1/D) - 1)
+  const new_interval = s * (Math.pow(request_retention, 1 / w[10]) - 1)
 
   if (isNaN(new_interval) || !isFinite(new_interval)) {
-    console.error('Calculated interval is NaN or infinite:', { s, request_retention, w19: w[19], w10: w[10], new_interval })
+    console.error('Calculated interval is NaN or infinite:', { s, request_retention, w10: w[10], new_interval })
     return 1
   }
 
