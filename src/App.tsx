@@ -39,7 +39,7 @@ function App() {
           </div>
 
           {/* Control panel - 1/3 height on mobile, 40% width on desktop */}
-          <div className="flex-1 lg:w-2/5 flex flex-col overflow-auto">
+          <div className="flex-1 lg:w-2/5 flex flex-col overflow-hidden">
             <ControlPanel />
           </div>
         </div>
