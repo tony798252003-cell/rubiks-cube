@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { useCubeContext } from '../hooks/useCubeContext'
 import { FACES_ORDER, FACE_NAMES } from '../types/encoding'
 import type { Face } from '../types/cube'
@@ -22,8 +23,8 @@ export default function EncodingPanel({ isOpen, onClose }: EncodingPanelProps) {
     dispatch({ type: 'UPDATE_STICKER', payload: { type, key, label: value } })
   }
 
-  return (
-    <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 z-[10000] flex flex-col">
+  return createPortal(
+    <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 z-[99999] flex flex-col">
       {/* 固定標題欄 */}
       <div className="flex items-center px-6 py-4 border-b border-white/10 bg-slate-800/50 backdrop-blur-xl flex-shrink-0">
         <button
@@ -111,6 +112,7 @@ export default function EncodingPanel({ isOpen, onClose }: EncodingPanelProps) {
           完成
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

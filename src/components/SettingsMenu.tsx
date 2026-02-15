@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import EncodingPanel from './EncodingPanel'
 import { MemoryWordEditor } from './MemoryWordEditor'
 import {
@@ -127,8 +128,8 @@ export function SettingsMenu() {
       </button>
 
       {/* 全屏設定選單 */}
-      {showSettingsMenu && !showEncodingPanel && !showMemoryEditor && (
-        <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 z-[10000] flex flex-col">
+      {showSettingsMenu && !showEncodingPanel && !showMemoryEditor && createPortal(
+        <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 z-[99999] flex flex-col">
           {/* 標題欄 */}
           <div className="flex items-center px-6 py-4 border-b border-white/10 bg-slate-800/50 backdrop-blur-xl">
             <button
@@ -224,7 +225,8 @@ export function SettingsMenu() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* 編碼設定頁面 */}
@@ -236,8 +238,8 @@ export function SettingsMenu() {
       )}
 
       {/* 記憶字編輯器頁面 */}
-      {showMemoryEditor && (
-        <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 z-[10000] flex flex-col">
+      {showMemoryEditor && createPortal(
+        <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 z-[99999] flex flex-col">
           {/* 標題欄 */}
           <div className="flex items-center px-6 py-4 border-b border-white/10 bg-slate-800/50 backdrop-blur-xl">
             <button
@@ -257,7 +259,8 @@ export function SettingsMenu() {
               <MemoryWordEditor />
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )
