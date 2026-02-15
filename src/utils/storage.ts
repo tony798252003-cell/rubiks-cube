@@ -67,20 +67,36 @@ export function getCurrentStorageType(): StorageType {
 
 // 序列化 FSRS 卡片（Date -> string）
 function serializeFSRSCards(cards: FSRSCard[]): any[] {
-  return cards.map(card => ({
-    ...card,
-    due: card.due.toISOString(),
-    last_review: card.last_review.toISOString(),
-  }))
+  return cards.map(card => {
+    // 確保 due 和 last_review 是有效的 Date 對象
+    const due = card.due instanceof Date && !isNaN(card.due.getTime())
+      ? card.due
+      : new Date()
+
+    const last_review = card.last_review instanceof Date && !isNaN(card.last_review.getTime())
+      ? card.last_review
+      : new Date()
+
+    return {
+      ...card,
+      due: due.toISOString(),
+      last_review: last_review.toISOString(),
+    }
+  })
 }
 
 // 反序列化 FSRS 卡片（string -> Date）
 function deserializeFSRSCards(data: any[]): FSRSCard[] {
-  return data.map(card => ({
-    ...card,
-    due: new Date(card.due),
-    last_review: new Date(card.last_review),
-  }))
+  return data.map(card => {
+    const due = new Date(card.due)
+    const last_review = new Date(card.last_review)
+
+    return {
+      ...card,
+      due: isNaN(due.getTime()) ? new Date() : due,
+      last_review: isNaN(last_review.getTime()) ? new Date() : last_review,
+    }
+  })
 }
 
 /**
