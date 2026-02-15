@@ -67,15 +67,19 @@ export function getCurrentStorageType(): StorageType {
 
 // 序列化 FSRS 卡片（Date -> string）
 function serializeFSRSCards(cards: FSRSCard[]): any[] {
-  return cards.map(card => {
-    // 確保 due 和 last_review 是有效的 Date 對象
-    const due = card.due instanceof Date && !isNaN(card.due.getTime())
-      ? card.due
-      : new Date()
+  const invalidCards: string[] = []
 
-    const last_review = card.last_review instanceof Date && !isNaN(card.last_review.getTime())
-      ? card.last_review
-      : new Date()
+  const result = cards.map(card => {
+    // 確保 due 和 last_review 是有效的 Date 對象
+    const dueIsValid = card.due instanceof Date && !isNaN(card.due.getTime())
+    const lastReviewIsValid = card.last_review instanceof Date && !isNaN(card.last_review.getTime())
+
+    if (!dueIsValid || !lastReviewIsValid) {
+      invalidCards.push(`${card.id} (due: ${dueIsValid ? 'OK' : 'INVALID'}, last_review: ${lastReviewIsValid ? 'OK' : 'INVALID'})`)
+    }
+
+    const due = dueIsValid ? card.due : new Date()
+    const last_review = lastReviewIsValid ? card.last_review : new Date()
 
     return {
       ...card,
@@ -83,18 +87,47 @@ function serializeFSRSCards(cards: FSRSCard[]): any[] {
       last_review: last_review.toISOString(),
     }
   })
+
+  if (invalidCards.length > 0) {
+    console.warn('⚠️ Found cards with invalid dates:', invalidCards.slice(0, 5))
+  }
+
+  return result
 }
 
 // 反序列化 FSRS 卡片（string -> Date）
 function deserializeFSRSCards(data: any[]): FSRSCard[] {
   return data.map(card => {
-    const due = new Date(card.due)
-    const last_review = new Date(card.last_review)
+    // 如果已經是 Date 對象，直接使用；否則從字符串轉換
+    let due: Date
+    if (card.due instanceof Date) {
+      due = card.due
+    } else {
+      due = new Date(card.due)
+    }
+
+    let last_review: Date
+    if (card.last_review instanceof Date) {
+      last_review = card.last_review
+    } else {
+      last_review = new Date(card.last_review)
+    }
+
+    // 驗證 Date 是否有效
+    if (isNaN(due.getTime())) {
+      console.warn(`⚠️ Invalid due date for card ${card.id}, using current time`)
+      due = new Date()
+    }
+
+    if (isNaN(last_review.getTime())) {
+      console.warn(`⚠️ Invalid last_review date for card ${card.id}, using current time`)
+      last_review = new Date()
+    }
 
     return {
       ...card,
-      due: isNaN(due.getTime()) ? new Date() : due,
-      last_review: isNaN(last_review.getTime()) ? new Date() : last_review,
+      due,
+      last_review,
     }
   })
 }
