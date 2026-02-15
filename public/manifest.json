@@ -1,0 +1,18 @@
+{
+  "name": "魔術方塊盲解訓練",
+  "short_name": "方塊訓練",
+  "description": "使用 FSRS 演算法的魔術方塊盲解記憶訓練應用",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1e293b",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

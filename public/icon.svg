@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 背景 -->
+  <rect width="512" height="512" fill="#1e293b" rx="64"/>
+
+  <!-- 魔術方塊圖標 -->
+  <g transform="translate(256, 256)">
+    <!-- 3x3 方塊 -->
+    <g transform="rotate(-30) scale(2.5)">
+      <!-- 頂面 (藍色) -->
+      <path d="M -40,-20 L 0,-40 L 40,-20 L 0,0 Z" fill="#3b82f6"/>
+      <path d="M -40,-20 L 0,0 L 0,40 L -40,20 Z" fill="#2563eb"/>
+      <path d="M 0,-40 L 40,-20 L 40,20 L 0,40 Z" fill="#60a5fa"/>
+
+      <!-- 格線 -->
+      <line x1="-40" y1="-20" x2="40" y2="-20" stroke="#1e293b" stroke-width="2"/>
+      <line x1="-40" y1="20" x2="40" y2="20" stroke="#1e293b" stroke-width="2"/>
+      <line x1="0" y1="-40" x2="0" y2="40" stroke="#1e293b" stroke-width="2"/>
+
+      <!-- 中心立方體強調 -->
+      <circle cx="0" cy="0" r="8" fill="#fbbf24" opacity="0.8"/>
+    </g>
+  </g>
+
+  <!-- 底部文字 -->
+  <text x="256" y="440" font-family="Arial, sans-serif" font-size="48" font-weight="bold"
+        fill="#f8fafc" text-anchor="middle">🧊</text>
+</svg>
