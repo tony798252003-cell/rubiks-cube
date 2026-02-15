@@ -26,6 +26,7 @@ describe('storage', () => {
     const state = {
       encoding: DEFAULT_SPEFFZ_ENCODING,
       labelMode: 'all' as const,
+      layoutMode: 'balanced' as const,
       currentScramble: "R U R'",
       cubeStickers: createSolvedState(),
       memo: null,
@@ -55,6 +56,7 @@ describe('storage', () => {
     await saveToStorage({
       encoding: DEFAULT_SPEFFZ_ENCODING,
       labelMode: 'all',
+      layoutMode: 'balanced',
       currentScramble: null,
       cubeStickers: createSolvedState(),
       memo: null,

@@ -269,6 +269,7 @@ function parseStoredData(data: any): CubeState | null {
     return {
       encoding: data.encoding,
       labelMode: data.labelMode ?? 'all',
+      layoutMode: data.layoutMode ?? 'balanced',
       currentScramble: scramble,
       cubeStickers: stickers,
       memo,
