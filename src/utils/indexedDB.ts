@@ -120,35 +120,56 @@ export async function saveToIndexedDB(data: any): Promise<void> {
  * 從 IndexedDB 讀取數據
  */
 export async function loadFromIndexedDB(): Promise<any | null> {
+  console.log('📂 Starting loadFromIndexedDB...')
   try {
     const db = await openDB()
+    console.log('📂 IndexedDB opened successfully')
 
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction([STORE_NAME], 'readonly')
-      const store = transaction.objectStore(STORE_NAME)
-      const request = store.get(STATE_KEY)
+      try {
+        const transaction = db.transaction([STORE_NAME], 'readonly')
+        const store = transaction.objectStore(STORE_NAME)
+        console.log('📂 Getting data with key:', STATE_KEY)
+        const request = store.get(STATE_KEY)
 
-      request.onsuccess = () => {
-        const result = request.result
-        console.log('📂 IndexedDB raw result:', result)
-        console.log('📂 IndexedDB result.data:', result ? result.data : null)
-        resolve(result ? result.data : null)
-      }
+        request.onsuccess = () => {
+          const result = request.result
+          console.log('📂 IndexedDB raw result:', result)
+          console.log('📂 IndexedDB result type:', typeof result)
+          console.log('📂 IndexedDB result.data:', result ? result.data : null)
 
-      request.onerror = () => {
-        reject({
-          type: 'unknown',
-          message: 'Failed to load from IndexedDB',
-          originalError: request.error
-        } as StorageError)
-      }
+          if (result && result.data) {
+            console.log('📂 result.data keys:', Object.keys(result.data))
+            console.log('📂 result.data.fsrsCards length:', result.data.fsrsCards?.length)
+          }
 
-      transaction.oncomplete = () => {
-        db.close()
+          resolve(result ? result.data : null)
+        }
+
+        request.onerror = () => {
+          console.error('📂 IndexedDB request error:', request.error)
+          reject({
+            type: 'unknown',
+            message: 'Failed to load from IndexedDB',
+            originalError: request.error
+          } as StorageError)
+        }
+
+        transaction.oncomplete = () => {
+          console.log('📂 IndexedDB transaction complete')
+          db.close()
+        }
+
+        transaction.onerror = () => {
+          console.error('📂 IndexedDB transaction error:', transaction.error)
+        }
+      } catch (err) {
+        console.error('📂 Error in transaction setup:', err)
+        reject(err)
       }
     })
   } catch (error) {
-    console.error('Failed to load from IndexedDB:', error)
+    console.error('❌ Failed to load from IndexedDB:', error)
     return null
   }
 }
