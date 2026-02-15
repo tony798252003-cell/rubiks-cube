@@ -136,6 +136,12 @@ function deserializeFSRSCards(data: any[]): FSRSCard[] {
  * 保存狀態（自動選擇 IndexedDB 或 localStorage）
  */
 export async function saveToStorage(state: CubeState): Promise<void> {
+  // 如果存儲系統還沒初始化，先初始化
+  if (currentStorageType === 'none') {
+    console.log('💾 Storage not initialized, initializing now...')
+    await initializeStorage()
+  }
+
   const serializedData = {
     version: '2.0.0',
     encoding: state.encoding,
@@ -242,6 +248,12 @@ async function migrateFromLocalStorageIfNeeded(): Promise<void> {
  * 讀取狀態（自動選擇 IndexedDB 或 localStorage）
  */
 export async function loadFromStorage(): Promise<CubeState | null> {
+  // 如果存儲系統還沒初始化，先初始化
+  if (currentStorageType === 'none') {
+    console.log('📂 Storage not initialized, initializing now...')
+    await initializeStorage()
+  }
+
   let data: any = null
 
   // 優先從 IndexedDB 讀取
