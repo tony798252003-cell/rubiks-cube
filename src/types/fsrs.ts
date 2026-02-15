@@ -224,6 +224,12 @@ export class FSRS {
    * 重複卡片（生成 4 個選項的排程結果）
    */
   repeat(card: FSRSCard, now: Date): SchedulingCards {
+    // 驗證輸入
+    if (!(now instanceof Date) || isNaN(now.getTime())) {
+      console.error('Invalid now date passed to repeat:', now)
+      now = new Date()
+    }
+
     card = { ...card }
 
     if (card.state === 'new') {
@@ -400,14 +406,48 @@ export class FSRS {
   }
 
   private add_days(date: Date, days: number): Date {
+    // 驗證輸入
+    if (!(date instanceof Date) || isNaN(date.getTime())) {
+      console.error('Invalid date passed to add_days:', date)
+      date = new Date()
+    }
+    if (typeof days !== 'number' || isNaN(days) || !isFinite(days)) {
+      console.error('Invalid days passed to add_days:', days)
+      days = 1
+    }
+
     const result = new Date(date)
     result.setDate(result.getDate() + days)
+
+    // 驗證結果
+    if (isNaN(result.getTime())) {
+      console.error('add_days produced invalid date:', { date, days, result })
+      return new Date()
+    }
+
     return result
   }
 
   private add_minutes(date: Date, minutes: number): Date {
+    // 驗證輸入
+    if (!(date instanceof Date) || isNaN(date.getTime())) {
+      console.error('Invalid date passed to add_minutes:', date)
+      date = new Date()
+    }
+    if (typeof minutes !== 'number' || isNaN(minutes) || !isFinite(minutes)) {
+      console.error('Invalid minutes passed to add_minutes:', minutes)
+      minutes = 10
+    }
+
     const result = new Date(date)
     result.setMinutes(result.getMinutes() + minutes)
+
+    // 驗證結果
+    if (isNaN(result.getTime())) {
+      console.error('add_minutes produced invalid date:', { date, minutes, result })
+      return new Date()
+    }
+
     return result
   }
 
