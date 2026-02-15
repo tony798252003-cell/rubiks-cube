@@ -277,10 +277,44 @@ export function formatBytes(bytes: number): string {
  * 測試 IndexedDB 讀寫權限
  */
 export async function testIndexedDB(): Promise<boolean> {
+  const TEST_KEY = 'cubeTrainer_test_key'
+
   try {
-    const testData = { test: 'data', timestamp: Date.now() }
-    await saveToIndexedDB(testData)
-    const loaded = await loadFromIndexedDB()
+    const db = await openDB()
+
+    // 寫入測試數據
+    await new Promise<void>((resolve, reject) => {
+      const transaction = db.transaction([STORE_NAME], 'readwrite')
+      const store = transaction.objectStore(STORE_NAME)
+      const testData = { test: 'data', timestamp: Date.now() }
+      const request = store.put(testData, TEST_KEY)
+
+      request.onsuccess = () => resolve()
+      request.onerror = () => reject(request.error)
+    })
+
+    // 讀取測試數據
+    const loaded = await new Promise<any>((resolve, reject) => {
+      const transaction = db.transaction([STORE_NAME], 'readonly')
+      const store = transaction.objectStore(STORE_NAME)
+      const request = store.get(TEST_KEY)
+
+      request.onsuccess = () => resolve(request.result)
+      request.onerror = () => reject(request.error)
+    })
+
+    // 刪除測試數據
+    await new Promise<void>((resolve, reject) => {
+      const transaction = db.transaction([STORE_NAME], 'readwrite')
+      const store = transaction.objectStore(STORE_NAME)
+      const request = store.delete(TEST_KEY)
+
+      request.onsuccess = () => resolve()
+      request.onerror = () => reject(request.error)
+    })
+
+    db.close()
+
     return loaded !== null && loaded.test === 'data'
   } catch {
     return false
