@@ -46,6 +46,21 @@ export function FloatingButtons() {
       >
         <span className="text-lg">📚</span>
       </button>
+
+      {/* 浮動按鈕 - 左下角：佈局調整 */}
+      <button
+        onClick={() => dispatch({ type: 'CYCLE_LAYOUT_MODE' })}
+        className="absolute bottom-4 left-4 w-12 h-12 backdrop-blur-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 z-10"
+        title={
+          state.layoutMode === 'cube-focused' ? '方塊優先 (2:1)' :
+          state.layoutMode === 'balanced' ? '平衡模式 (1:1)' : '控制優先 (1:2)'
+        }
+      >
+        <span className="text-lg">
+          {state.layoutMode === 'cube-focused' ? '📐' :
+           state.layoutMode === 'balanced' ? '⚖️' : '📊'}
+        </span>
+      </button>
     </>
   )
 }

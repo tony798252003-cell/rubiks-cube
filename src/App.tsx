@@ -6,8 +6,11 @@ import { FloatingButtons } from './components/FloatingButtons'
 import { useEffect } from 'react'
 import { initializeCubeEngine } from './utils/cubeState'
 import { initializeStorage } from './utils/storage'
+import { useCubeContext } from './hooks/useCubeContext'
 
 function App() {
+  const { state } = useCubeContext()
+
   useEffect(() => {
     initializeCubeEngine()
     // 初始化存儲系統（IndexedDB 或 localStorage）
@@ -15,6 +18,17 @@ function App() {
       console.log(`Storage initialized: ${storageType}`)
     })
   }, [])
+
+  // 根據佈局模式決定 flex 比例
+  const cubeFlexClass =
+    state.layoutMode === 'cube-focused' ? 'flex-[2]' :
+    state.layoutMode === 'balanced' ? 'flex-1' :
+    'flex-[0.8]' // control-focused
+
+  const controlFlexClass =
+    state.layoutMode === 'cube-focused' ? 'flex-1' :
+    state.layoutMode === 'balanced' ? 'flex-1' :
+    'flex-[1.5]' // control-focused
 
   return (
     <div className="w-screen h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
@@ -32,16 +46,16 @@ function App() {
       </header>
 
       <main className="flex-1 flex overflow-hidden flex-col">
-        {/* Main content area - mobile first, 2/3 for cube, 1/3 for controls */}
+        {/* Main content area - mobile first, adjustable ratio */}
         <div className="flex-1 flex flex-col lg:flex-row lg:gap-6 lg:p-6 max-w-7xl lg:mx-auto w-full overflow-hidden">
-          {/* Cube visualization - 2/3 height on mobile, 60% width on desktop */}
-          <div className="flex-[2] lg:flex-1 lg:w-3/5 rounded-none lg:rounded-2xl overflow-hidden backdrop-blur-xl bg-white/5 lg:border border-white/10 shadow-2xl min-h-0 relative">
+          {/* Cube visualization */}
+          <div className={`${cubeFlexClass} rounded-none lg:rounded-2xl overflow-hidden backdrop-blur-xl bg-white/5 lg:border border-white/10 shadow-2xl min-h-0 relative`}>
             <CubeScene />
             <FloatingButtons />
           </div>
 
-          {/* Control panel - 1/3 height on mobile, 40% width on desktop */}
-          <div className="flex-1 lg:w-2/5 flex flex-col overflow-hidden">
+          {/* Control panel */}
+          <div className={`${controlFlexClass} flex flex-col overflow-auto min-h-0`}>
             <ControlPanel />
           </div>
         </div>

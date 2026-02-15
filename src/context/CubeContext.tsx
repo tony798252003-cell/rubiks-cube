@@ -13,10 +13,12 @@ import { applyScramble, createSolvedState, type CubeState as CubeStickers } from
 import { analyzeBlindsolve } from '../utils/blindsolve'
 
 export type LabelMode = 'all' | 'corners' | 'edges' | 'none'
+export type LayoutMode = 'cube-focused' | 'balanced' | 'control-focused'
 
 export interface CubeState {
   encoding: CubeEncoding
   labelMode: LabelMode
+  layoutMode: LayoutMode
   currentScramble: string | null
   cubeStickers: CubeStickers
   memo: { edges: string; corners: string } | null
@@ -30,6 +32,7 @@ export type CubeAction =
   | { type: 'UPDATE_STICKER'; payload: { type: 'corners' | 'edges'; key: string; label: string } }
   | { type: 'RESET_ENCODING' }
   | { type: 'CYCLE_LABEL_MODE' }
+  | { type: 'CYCLE_LAYOUT_MODE' }
   | { type: 'SET_SCRAMBLE'; payload: string }
   | { type: 'UPDATE_MEMORY_WORD'; payload: { key: string; word: string } }
   | { type: 'RESET_MEMORY_WORDS' }
@@ -56,6 +59,7 @@ function createDefaultSession(): DailySession {
 const defaultState: CubeState = {
   encoding: DEFAULT_ZHUYIN_ENCODING,
   labelMode: 'all',
+  layoutMode: 'balanced',
   currentScramble: null,
   cubeStickers: createSolvedState(),
   memo: null,
@@ -89,6 +93,11 @@ function cubeReducer(state: CubeState, action: CubeAction): CubeState {
       const modes: LabelMode[] = ['all', 'corners', 'edges', 'none']
       const idx = modes.indexOf(state.labelMode)
       return { ...state, labelMode: modes[(idx + 1) % modes.length] }
+    }
+    case 'CYCLE_LAYOUT_MODE': {
+      const modes: LayoutMode[] = ['cube-focused', 'balanced', 'control-focused']
+      const idx = modes.indexOf(state.layoutMode)
+      return { ...state, layoutMode: modes[(idx + 1) % modes.length] }
     }
     case 'SET_SCRAMBLE': {
       const stickers = applyScramble(action.payload)
