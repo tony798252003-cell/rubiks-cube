@@ -94,7 +94,12 @@ export function init_difficulty(rating: Rating, w: number[]): number {
  * 計算初始穩定性（首次學習時）
  */
 export function init_stability(rating: Rating, w: number[]): number {
-  return Math.max(w[rating - 1], 0.1)
+  const stability = w[rating - 1]
+  if (typeof stability !== 'number' || isNaN(stability) || !isFinite(stability)) {
+    console.error('Invalid stability from weights:', { rating, w_value: stability, w })
+    return 0.1
+  }
+  return Math.max(stability, 0.1)
 }
 
 /**
@@ -103,7 +108,23 @@ export function init_stability(rating: Rating, w: number[]): number {
  * 其中 t = 經過的天數，S = 穩定性
  */
 export function forgetting_curve(elapsed_days: number, stability: number): number {
-  return Math.pow(0.9, elapsed_days / stability)
+  if (typeof stability !== 'number' || isNaN(stability) || stability === 0 || !isFinite(stability)) {
+    console.error('Invalid stability in forgetting_curve:', stability)
+    return 0.9 // 默認提取率
+  }
+  if (typeof elapsed_days !== 'number' || isNaN(elapsed_days) || !isFinite(elapsed_days)) {
+    console.error('Invalid elapsed_days in forgetting_curve:', elapsed_days)
+    elapsed_days = 0
+  }
+
+  const result = Math.pow(0.9, elapsed_days / stability)
+
+  if (isNaN(result) || !isFinite(result)) {
+    console.error('forgetting_curve produced invalid result:', { elapsed_days, stability, result })
+    return 0.9
+  }
+
+  return result
 }
 
 /**
@@ -123,9 +144,21 @@ export function next_stability_from_learning(
   rating: Rating,
   w: number[]
 ): number {
+  if (typeof s !== 'number' || isNaN(s) || !isFinite(s) || s <= 0) {
+    console.error('Invalid stability in next_stability_from_learning:', s)
+    return 0.1
+  }
+
   const hard_penalty = rating === 2 ? w[15] : 1
   const easy_bonus = rating === 4 ? w[16] : 1
-  return s * Math.exp(w[17] * (rating - 3 + w[18])) * hard_penalty * easy_bonus
+  const result = s * Math.exp(w[17] * (rating - 3 + w[18])) * hard_penalty * easy_bonus
+
+  if (isNaN(result) || !isFinite(result) || result <= 0) {
+    console.error('next_stability_from_learning produced invalid result:', { s, rating, result, w })
+    return Math.max(s, 0.1)
+  }
+
+  return result
 }
 
 /**
@@ -138,6 +171,20 @@ export function next_stability_from_review(
   rating: Rating,
   w: number[]
 ): number {
+  // 驗證輸入
+  if (typeof s !== 'number' || isNaN(s) || !isFinite(s) || s <= 0) {
+    console.error('Invalid stability in next_stability_from_review:', s)
+    return 0.1
+  }
+  if (typeof d !== 'number' || isNaN(d) || !isFinite(d)) {
+    console.error('Invalid difficulty in next_stability_from_review:', d)
+    d = 5 // 使用默認難度
+  }
+  if (typeof r !== 'number' || isNaN(r) || !isFinite(r)) {
+    console.error('Invalid retrievability in next_stability_from_review:', r)
+    r = 0.9 // 使用默認提取率
+  }
+
   const hard_penalty = rating === 2 ? w[15] : 1
   const easy_bonus = rating === 4 ? w[16] : 1
 
@@ -151,6 +198,11 @@ export function next_stability_from_review(
     easy_bonus
   )
 
+  if (isNaN(next_s) || !isFinite(next_s) || next_s <= 0) {
+    console.error('Calculated next_stability is invalid:', { d, s, r, rating, next_s, w })
+    return Math.max(s, 0.1) // fallback 到當前 stability
+  }
+
   return next_s
 }
 
@@ -158,7 +210,27 @@ export function next_stability_from_review(
  * 計算下次復習間隔（天數）
  */
 export function next_interval(s: number, request_retention: number, w: number[]): number {
+  // 驗證輸入
+  if (typeof s !== 'number' || isNaN(s) || !isFinite(s) || s <= 0) {
+    console.error('Invalid stability in next_interval:', s)
+    return 1
+  }
+  if (typeof w[19] !== 'number' || isNaN(w[19]) || w[19] === 0 || !isFinite(w[19])) {
+    console.error('Invalid w[19] in next_interval:', w[19])
+    return 1
+  }
+  if (typeof w[10] !== 'number' || isNaN(w[10]) || w[10] === 0 || !isFinite(w[10])) {
+    console.error('Invalid w[10] in next_interval:', w[10])
+    return 1
+  }
+
   const new_interval = s / w[19] * (Math.pow(request_retention, 1 / w[10]) - 1)
+
+  if (isNaN(new_interval) || !isFinite(new_interval)) {
+    console.error('Calculated interval is NaN or infinite:', { s, request_retention, w19: w[19], w10: w[10], new_interval })
+    return 1
+  }
+
   return Math.max(1, Math.round(new_interval))
 }
 
