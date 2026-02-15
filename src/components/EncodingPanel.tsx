@@ -23,31 +23,27 @@ export default function EncodingPanel({ isOpen, onClose }: EncodingPanelProps) {
   }
 
   return (
-    <div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start justify-center z-[10003]"
-      onClick={onClose}
-    >
-      <div
-        className="bg-gray-800 w-full h-full flex flex-col overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* 固定標題欄 */}
-        <div className="flex justify-between items-center px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-600 flex-shrink-0 bg-slate-800">
-          <h2 className="text-white text-lg sm:text-xl font-bold">編碼設定</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-white text-2xl w-10 h-10 flex items-center justify-center hover:bg-gray-700 rounded transition-colors flex-shrink-0"
-          >
-            ✕
-          </button>
-        </div>
+    <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 z-[10000] flex flex-col">
+      {/* 固定標題欄 */}
+      <div className="flex items-center px-6 py-4 border-b border-white/10 bg-slate-800/50 backdrop-blur-xl flex-shrink-0">
+        <button
+          onClick={onClose}
+          className="p-2 hover:bg-white/10 rounded-lg transition-colors mr-4"
+        >
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <h1 className="text-white text-xl font-bold">編碼設定</h1>
+      </div>
 
-        {/* 可滾動內容區 */}
-        <div className="flex-1 overflow-y-auto px-4 py-3 sm:px-6 sm:py-4 bg-gray-900">
+      {/* 可滾動內容區 */}
+      <div className="flex-1 overflow-y-auto p-4">
+        <div className="max-w-4xl mx-auto">
           <div className="mb-6">
             <button
               onClick={() => dispatch({ type: 'RESET_ENCODING' })}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
             >
               套用 Speffz 預設編碼
             </button>
@@ -55,23 +51,23 @@ export default function EncodingPanel({ isOpen, onClose }: EncodingPanelProps) {
 
           {/* 按面分組顯示 */}
           {FACES_ORDER.map((face) => (
-          <div key={face} className="mb-6 p-4 bg-gray-700 rounded-lg border border-gray-600">
-            <h3 className="text-white text-lg mb-3 font-semibold">{FACE_NAMES[face]}</h3>
+          <div key={face} className="mb-6 p-6 bg-white/5 border border-white/10 rounded-xl">
+            <h3 className="text-white text-xl mb-4 font-bold">{FACE_NAMES[face]}</h3>
 
             {/* 角塊貼紙 */}
-            <div className="mb-3">
-              <p className="text-gray-400 text-sm mb-2">角塊</p>
-              <div className="grid grid-cols-4 gap-2">
+            <div className="mb-4">
+              <p className="text-gray-300 text-base mb-3 font-medium">角塊</p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {getStickersOnFace('corners', face).map(([key, label]) => {
                   const piece = key.split('-')[0]
                   return (
                     <div key={key} className="flex flex-col">
-                      <label className="text-gray-500 text-xs mb-1">{piece}</label>
+                      <label className="text-gray-400 text-sm mb-1.5">{piece}</label>
                       <input
                         type="text"
                         value={label}
                         onChange={(e) => handleChange('corners', key, e.target.value)}
-                        className="px-2 py-1 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none text-center"
+                        className="px-3 py-2 bg-slate-700/50 text-white rounded-lg border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none text-center transition-colors"
                         maxLength={3}
                       />
                     </div>
@@ -82,18 +78,18 @@ export default function EncodingPanel({ isOpen, onClose }: EncodingPanelProps) {
 
             {/* 邊塊貼紙 */}
             <div>
-              <p className="text-gray-400 text-sm mb-2">邊塊</p>
-              <div className="grid grid-cols-4 gap-2">
+              <p className="text-gray-300 text-base mb-3 font-medium">邊塊</p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {getStickersOnFace('edges', face).map(([key, label]) => {
                   const piece = key.split('-')[0]
                   return (
                     <div key={key} className="flex flex-col">
-                      <label className="text-gray-500 text-xs mb-1">{piece}</label>
+                      <label className="text-gray-400 text-sm mb-1.5">{piece}</label>
                       <input
                         type="text"
                         value={label}
                         onChange={(e) => handleChange('edges', key, e.target.value)}
-                        className="px-2 py-1 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none text-center"
+                        className="px-3 py-2 bg-slate-700/50 text-white rounded-lg border border-slate-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none text-center transition-colors"
                         maxLength={3}
                       />
                     </div>
@@ -104,16 +100,16 @@ export default function EncodingPanel({ isOpen, onClose }: EncodingPanelProps) {
           </div>
           ))}
         </div>
+      </div>
 
-        {/* 固定底部按鈕欄 */}
-        <div className="px-4 py-3 sm:px-6 sm:py-4 border-t border-gray-600 flex justify-end flex-shrink-0 bg-slate-800">
-          <button
-            onClick={onClose}
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-medium transition-colors"
-          >
-            完成
-          </button>
-        </div>
+      {/* 固定底部按鈕欄 */}
+      <div className="px-6 py-4 border-t border-white/10 flex justify-end flex-shrink-0 bg-slate-800/50 backdrop-blur-xl">
+        <button
+          onClick={onClose}
+          className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+        >
+          完成
+        </button>
       </div>
     </div>
   )

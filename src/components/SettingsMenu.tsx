@@ -27,7 +27,6 @@ export function SettingsMenu() {
     } catch (error) {
       alert('❌ 導出失敗：' + (error as Error).message)
     }
-    setShowSettingsMenu(false)
   }
 
   // 導入學習進度
@@ -53,7 +52,6 @@ export function SettingsMenu() {
       alert('❌ 導入失敗：' + (error as Error).message)
     }
 
-    setShowSettingsMenu(false)
     // 清空 input 以便下次選擇相同文件
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
@@ -81,8 +79,6 @@ export function SettingsMenu() {
         }
       }
     }
-
-    setShowSettingsMenu(false)
   }
 
   // 顯示存儲狀態
@@ -109,21 +105,6 @@ export function SettingsMenu() {
 
   return (
     <>
-      <EncodingPanel isOpen={showEncodingPanel} onClose={() => setShowEncodingPanel(false)} />
-
-      {/* 記憶字編輯器 Modal */}
-      {showMemoryEditor && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[10003] p-4" onClick={() => setShowMemoryEditor(false)}>
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 max-w-6xl w-full max-h-[90vh] overflow-auto shadow-2xl border border-white/10" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">記憶字編輯器</h2>
-              <button onClick={() => setShowMemoryEditor(false)} className="text-gray-400 hover:text-white text-2xl transition-colors">&times;</button>
-            </div>
-            <MemoryWordEditor />
-          </div>
-        </div>
-      )}
-
       {/* 隱藏的文件輸入 */}
       <input
         ref={fileInputRef}
@@ -133,94 +114,151 @@ export function SettingsMenu() {
         style={{ display: 'none' }}
       />
 
-      {/* Settings menu with modern design */}
-      <div className="relative">
-        <button
-          onClick={() => setShowSettingsMenu(!showSettingsMenu)}
-          className="p-2.5 backdrop-blur-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-white/10"
-          title="設定"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-        </button>
+      {/* 齒輪按鈕 */}
+      <button
+        onClick={() => setShowSettingsMenu(true)}
+        className="p-2.5 backdrop-blur-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-white/10"
+        title="設定"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </button>
 
-        {showSettingsMenu && (
-          <>
-            <div className="fixed inset-0 z-[10001]" onClick={() => setShowSettingsMenu(false)} />
-            <div className="absolute right-0 mt-2 w-64 backdrop-blur-xl bg-slate-800/95 border border-white/10 rounded-xl shadow-2xl z-[10002] overflow-hidden">
-              <div className="py-2">
-                {/* 編碼設定 */}
-                <button
-                  onClick={() => {
-                    setShowEncodingPanel(true)
-                    setShowSettingsMenu(false)
-                  }}
-                  className="block w-full text-left px-4 py-3 text-sm text-white hover:bg-white/10 transition-colors duration-200 flex items-center gap-3"
-                >
-                  <span className="text-lg">⚙️</span>
-                  編碼設定
-                </button>
+      {/* 全屏設定選單 */}
+      {showSettingsMenu && !showEncodingPanel && !showMemoryEditor && (
+        <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 z-[10000] flex flex-col">
+          {/* 標題欄 */}
+          <div className="flex items-center px-6 py-4 border-b border-white/10 bg-slate-800/50 backdrop-blur-xl">
+            <button
+              onClick={() => setShowSettingsMenu(false)}
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors mr-4"
+            >
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h1 className="text-white text-xl font-bold">設定</h1>
+          </div>
 
-                {/* 記憶字編輯 */}
-                <button
-                  onClick={() => {
-                    setShowMemoryEditor(true)
-                    setShowSettingsMenu(false)
-                  }}
-                  className="block w-full text-left px-4 py-3 text-sm text-white hover:bg-white/10 transition-colors duration-200 flex items-center gap-3"
-                >
-                  <span className="text-lg">📝</span>
-                  記憶字編輯
-                </button>
+          {/* 選單內容 */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="max-w-2xl mx-auto p-4">
+              {/* 編碼設定 */}
+              <button
+                onClick={() => setShowEncodingPanel(true)}
+                className="w-full text-left px-6 py-4 mb-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors flex items-center gap-4"
+              >
+                <span className="text-3xl">⚙️</span>
+                <div>
+                  <div className="text-white text-lg font-semibold">編碼設定</div>
+                  <div className="text-gray-400 text-sm">設定角塊和邊塊的編碼標籤</div>
+                </div>
+              </button>
 
-                {/* 分隔線 */}
-                <div className="border-t border-white/10 my-2"></div>
+              {/* 記憶字編輯 */}
+              <button
+                onClick={() => setShowMemoryEditor(true)}
+                className="w-full text-left px-6 py-4 mb-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors flex items-center gap-4"
+              >
+                <span className="text-3xl">📝</span>
+                <div>
+                  <div className="text-white text-lg font-semibold">記憶字編輯</div>
+                  <div className="text-gray-400 text-sm">編輯和管理記憶字詞庫</div>
+                </div>
+              </button>
 
-                {/* 導出學習進度 */}
-                <button
-                  onClick={handleExport}
-                  className="block w-full text-left px-4 py-3 text-sm text-white hover:bg-white/10 transition-colors duration-200 flex items-center gap-3"
-                >
-                  <span className="text-lg">💾</span>
-                  導出學習進度
-                </button>
+              {/* 分隔線 */}
+              <div className="border-t border-white/10 my-4"></div>
 
-                {/* 導入學習進度 */}
-                <button
-                  onClick={handleImport}
-                  className="block w-full text-left px-4 py-3 text-sm text-white hover:bg-white/10 transition-colors duration-200 flex items-center gap-3"
-                >
-                  <span className="text-lg">📥</span>
-                  導入學習進度
-                </button>
+              {/* 導出學習進度 */}
+              <button
+                onClick={handleExport}
+                className="w-full text-left px-6 py-4 mb-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors flex items-center gap-4"
+              >
+                <span className="text-3xl">💾</span>
+                <div>
+                  <div className="text-white text-lg font-semibold">導出學習進度</div>
+                  <div className="text-gray-400 text-sm">備份所有學習數據</div>
+                </div>
+              </button>
 
-                {/* 存儲狀態 */}
-                <button
-                  onClick={handleShowStorageInfo}
-                  className="block w-full text-left px-4 py-3 text-sm text-white hover:bg-white/10 transition-colors duration-200 flex items-center gap-3"
-                >
-                  <span className="text-lg">📊</span>
-                  存儲狀態
-                </button>
+              {/* 導入學習進度 */}
+              <button
+                onClick={handleImport}
+                className="w-full text-left px-6 py-4 mb-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors flex items-center gap-4"
+              >
+                <span className="text-3xl">📥</span>
+                <div>
+                  <div className="text-white text-lg font-semibold">導入學習進度</div>
+                  <div className="text-gray-400 text-sm">從備份文件恢復數據</div>
+                </div>
+              </button>
 
-                {/* 分隔線 */}
-                <div className="border-t border-white/10 my-2"></div>
+              {/* 存儲狀態 */}
+              <button
+                onClick={handleShowStorageInfo}
+                className="w-full text-left px-6 py-4 mb-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-colors flex items-center gap-4"
+              >
+                <span className="text-3xl">📊</span>
+                <div>
+                  <div className="text-white text-lg font-semibold">存儲狀態</div>
+                  <div className="text-gray-400 text-sm">查看存儲空間使用情況</div>
+                </div>
+              </button>
 
-                {/* 清除所有數據 */}
-                <button
-                  onClick={handleClearData}
-                  className="block w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 transition-colors duration-200 flex items-center gap-3"
-                >
-                  <span className="text-lg">🗑️</span>
-                  清除所有數據
-                </button>
-              </div>
+              {/* 分隔線 */}
+              <div className="border-t border-white/10 my-4"></div>
+
+              {/* 清除所有數據 */}
+              <button
+                onClick={handleClearData}
+                className="w-full text-left px-6 py-4 mb-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-xl transition-colors flex items-center gap-4"
+              >
+                <span className="text-3xl">🗑️</span>
+                <div>
+                  <div className="text-red-400 text-lg font-semibold">清除所有數據</div>
+                  <div className="text-red-300/60 text-sm">永久刪除所有學習進度</div>
+                </div>
+              </button>
             </div>
-          </>
-        )}
-      </div>
+          </div>
+        </div>
+      )}
+
+      {/* 編碼設定頁面 */}
+      {showEncodingPanel && (
+        <EncodingPanel
+          isOpen={showEncodingPanel}
+          onClose={() => setShowEncodingPanel(false)}
+        />
+      )}
+
+      {/* 記憶字編輯器頁面 */}
+      {showMemoryEditor && (
+        <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 z-[10000] flex flex-col">
+          {/* 標題欄 */}
+          <div className="flex items-center px-6 py-4 border-b border-white/10 bg-slate-800/50 backdrop-blur-xl">
+            <button
+              onClick={() => setShowMemoryEditor(false)}
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors mr-4"
+            >
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h1 className="text-white text-xl font-bold">記憶字編輯器</h1>
+          </div>
+
+          {/* 內容區 */}
+          <div className="flex-1 overflow-y-auto p-4">
+            <div className="max-w-6xl mx-auto">
+              <MemoryWordEditor />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
