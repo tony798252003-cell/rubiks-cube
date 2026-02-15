@@ -91,6 +91,7 @@ export async function saveToStorage(state: CubeState): Promise<void> {
     version: '2.0.0',
     encoding: state.encoding,
     labelMode: state.labelMode,
+    layoutMode: state.layoutMode,
     currentScramble: state.currentScramble,
     memoryWords: state.memoryWords,
     flashcards: state.flashcards,
@@ -98,6 +99,13 @@ export async function saveToStorage(state: CubeState): Promise<void> {
     dailySession: state.dailySession,
     lastUpdated: new Date().toISOString(),
   }
+
+  console.log('💾 Saving state:', {
+    fsrsCardsCount: state.fsrsCards.length,
+    dailySession: state.dailySession,
+    learning_queue: state.dailySession.learning_queue.length,
+    introduced_cards: state.dailySession.introduced_cards.length,
+  })
 
   // 優先保存到 IndexedDB
   if (currentStorageType === 'indexedDB') {
@@ -191,6 +199,7 @@ export async function loadFromStorage(): Promise<CubeState | null> {
   if (currentStorageType === 'indexedDB') {
     try {
       data = await loadFromIndexedDB()
+      console.log('📂 Loaded from IndexedDB')
     } catch (error) {
       console.error('Failed to load from IndexedDB:', error)
       // 降級到 localStorage
@@ -201,15 +210,33 @@ export async function loadFromStorage(): Promise<CubeState | null> {
   // 降級到 localStorage
   if (!data && currentStorageType === 'localStorage') {
     data = loadFromLocalStorage()
+    console.log('📂 Loaded from localStorage')
   }
 
   // 沒有數據
   if (!data) {
+    console.log('📂 No data found in storage')
     return null
   }
 
+  console.log('📂 Raw data from storage:', {
+    fsrsCardsCount: data.fsrsCards?.length,
+    dailySession: data.dailySession,
+  })
+
   // 解析數據
-  return parseStoredData(data)
+  const parsed = parseStoredData(data)
+
+  if (parsed) {
+    console.log('📂 Parsed state:', {
+      fsrsCardsCount: parsed.fsrsCards.length,
+      dailySession: parsed.dailySession,
+      learning_queue: parsed.dailySession.learning_queue.length,
+      introduced_cards: parsed.dailySession.introduced_cards.length,
+    })
+  }
+
+  return parsed
 }
 
 /**
@@ -230,10 +257,20 @@ function parseStoredData(data: any): CubeState | null {
     let fsrsCards: FSRSCard[]
     if (data.fsrsCards && Array.isArray(data.fsrsCards)) {
       fsrsCards = deserializeFSRSCards(data.fsrsCards)
+      console.log('📋 Loaded FSRS cards from storage:', {
+        total: fsrsCards.length,
+        byState: {
+          new: fsrsCards.filter(c => c.state === 'new').length,
+          learning: fsrsCards.filter(c => c.state === 'learning').length,
+          review: fsrsCards.filter(c => c.state === 'review').length,
+          relearning: fsrsCards.filter(c => c.state === 'relearning').length,
+        }
+      })
     } else if (data.flashcards && isOldFormat(data.flashcards)) {
-      console.log('Migrating from old flashcard format to FSRS...')
+      console.log('🔄 Migrating from old flashcard format to FSRS...')
       fsrsCards = migrateDeckToFSRS(data.flashcards)
     } else {
+      console.log('🆕 Initializing new FSRS cards')
       fsrsCards = initializeFSRSCards(memoryWords)
     }
 
@@ -243,7 +280,14 @@ function parseStoredData(data: any): CubeState | null {
 
     if (data.dailySession) {
       dailySession = data.dailySession
+      console.log('📅 Session date check:', {
+        stored: dailySession.date,
+        today: today,
+        match: dailySession.date === today
+      })
+
       if (dailySession.date !== today) {
+        console.log('🔄 New day detected, resetting daily session (learning queue and introduced cards will be cleared)')
         dailySession = {
           date: today,
           new_cards_today: 0,
@@ -253,8 +297,14 @@ function parseStoredData(data: any): CubeState | null {
           introduced_cards: [],
           session_start: Date.now()
         }
+      } else {
+        console.log('✅ Same day, preserving session:', {
+          learning_queue: dailySession.learning_queue.length,
+          introduced_cards: dailySession.introduced_cards.length,
+        })
       }
     } else {
+      console.log('🆕 No session data, creating new session')
       dailySession = {
         date: today,
         new_cards_today: 0,
