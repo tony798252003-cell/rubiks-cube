@@ -113,7 +113,7 @@ export function SettingsMenu() {
 
       {/* 記憶字編輯器 Modal */}
       {showMemoryEditor && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4" onClick={() => setShowMemoryEditor(false)}>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[10003] p-4" onClick={() => setShowMemoryEditor(false)}>
           <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 max-w-6xl w-full max-h-[90vh] overflow-auto shadow-2xl border border-white/10" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">記憶字編輯器</h2>
@@ -148,8 +148,8 @@ export function SettingsMenu() {
 
         {showSettingsMenu && (
           <>
-            <div className="fixed inset-0 z-[9998]" onClick={() => setShowSettingsMenu(false)} />
-            <div className="absolute right-0 mt-2 w-64 backdrop-blur-xl bg-slate-800/95 border border-white/10 rounded-xl shadow-2xl z-[9999] overflow-hidden">
+            <div className="fixed inset-0 z-[10001]" onClick={() => setShowSettingsMenu(false)} />
+            <div className="absolute right-0 mt-2 w-64 backdrop-blur-xl bg-slate-800/95 border border-white/10 rounded-xl shadow-2xl z-[10002] overflow-hidden">
               <div className="py-2">
                 {/* 編碼設定 */}
                 <button

@@ -18,7 +18,7 @@ function App() {
   return (
     <div className="w-screen h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col">
       {/* Header with glassmorphism effect */}
-      <header className="backdrop-blur-xl bg-white/5 border-b border-white/10 shadow-2xl">
+      <header className="backdrop-blur-xl bg-white/5 border-b border-white/10 shadow-2xl relative z-[10000]">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
