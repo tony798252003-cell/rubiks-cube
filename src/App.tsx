@@ -2,6 +2,7 @@ import './index.css'
 import CubeScene from './components/CubeScene'
 import ControlPanel from './components/ControlPanel'
 import { SettingsMenu } from './components/SettingsMenu'
+import { FloatingButtons } from './components/FloatingButtons'
 import { useEffect } from 'react'
 import { initializeCubeEngine } from './utils/cubeState'
 import { initializeStorage } from './utils/storage'
@@ -34,8 +35,9 @@ function App() {
         {/* Main content area - mobile first, 2/3 for cube, 1/3 for controls */}
         <div className="flex-1 flex flex-col lg:flex-row lg:gap-6 lg:p-6 max-w-7xl lg:mx-auto w-full overflow-hidden">
           {/* Cube visualization - 2/3 height on mobile, 60% width on desktop */}
-          <div className="flex-[2] lg:flex-1 lg:w-3/5 rounded-none lg:rounded-2xl overflow-hidden backdrop-blur-xl bg-white/5 lg:border border-white/10 shadow-2xl min-h-0">
+          <div className="flex-[2] lg:flex-1 lg:w-3/5 rounded-none lg:rounded-2xl overflow-hidden backdrop-blur-xl bg-white/5 lg:border border-white/10 shadow-2xl min-h-0 relative">
             <CubeScene />
+            <FloatingButtons />
           </div>
 
           {/* Control panel - 1/3 height on mobile, 40% width on desktop */}
