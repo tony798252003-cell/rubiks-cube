@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useCubeContext } from '../hooks/useCubeContext'
 import { FlashcardPractice } from './FlashcardPractice'
 
@@ -8,8 +9,8 @@ export function FloatingButtons() {
 
   return (
     <>
-      {/* 記憶練習 - 覆蓋主內容區域 */}
-      {showFlashcardPractice && (
+      {/* 記憶練習 - 覆蓋主內容區域，使用 Portal 渲染到 body */}
+      {showFlashcardPractice && createPortal(
         <div className="fixed inset-0 top-[73px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 z-[9999] flex flex-col">
           {/* 返回按鈕 */}
           <div className="absolute top-4 left-4 z-10">
@@ -28,7 +29,8 @@ export function FloatingButtons() {
               <FlashcardPractice />
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* 浮動按鈕 - 左上角：標籤切換 */}
