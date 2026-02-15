@@ -24,26 +24,26 @@ export default function EncodingPanel({ isOpen, onClose }: EncodingPanelProps) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-[10003] p-4"
+      className="fixed inset-0 bg-black/50 flex items-start sm:items-center justify-center z-[10003] p-0 sm:p-4"
       onClick={onClose}
     >
       <div
-        className="bg-gray-800 rounded-lg max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden"
+        className="bg-gray-800 rounded-none sm:rounded-lg max-w-3xl w-full h-full sm:h-auto sm:max-h-[85vh] flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 固定標題欄 */}
-        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-700 flex-shrink-0">
-          <h2 className="text-white text-xl font-bold">編碼設定</h2>
+        <div className="flex justify-between items-center px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-700 flex-shrink-0 bg-gray-800">
+          <h2 className="text-white text-lg sm:text-xl font-bold">編碼設定</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white text-2xl w-8 h-8 flex items-center justify-center hover:bg-gray-700 rounded transition-colors"
+            className="text-gray-400 hover:text-white text-2xl w-10 h-10 flex items-center justify-center hover:bg-gray-700 rounded transition-colors flex-shrink-0"
           >
             ✕
           </button>
         </div>
 
         {/* 可滾動內容區 */}
-        <div className="flex-1 overflow-y-auto px-6 py-4">
+        <div className="flex-1 overflow-y-auto px-4 py-3 sm:px-6 sm:py-4">
           <div className="mb-6">
             <button
               onClick={() => dispatch({ type: 'RESET_ENCODING' })}
@@ -106,7 +106,7 @@ export default function EncodingPanel({ isOpen, onClose }: EncodingPanelProps) {
         </div>
 
         {/* 固定底部按鈕欄 */}
-        <div className="px-6 py-4 border-t border-gray-700 flex justify-end flex-shrink-0">
+        <div className="px-4 py-3 sm:px-6 sm:py-4 border-t border-gray-700 flex justify-end flex-shrink-0 bg-gray-800">
           <button
             onClick={onClose}
             className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-medium transition-colors"
