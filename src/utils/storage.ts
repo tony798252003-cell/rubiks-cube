@@ -162,10 +162,18 @@ export async function saveToStorage(state: CubeState): Promise<void> {
     introduced_cards: state.dailySession.introduced_cards.length,
   })
 
+  console.log('💾 Serialized data structure:', {
+    hasEncoding: !!serializedData.encoding,
+    hasMemoryWords: !!serializedData.memoryWords,
+    fsrsCardsCount: serializedData.fsrsCards?.length,
+    hasDailySession: !!serializedData.dailySession,
+  })
+
   // 優先保存到 IndexedDB
   if (currentStorageType === 'indexedDB') {
     try {
       await saveToIndexedDB(serializedData)
+      console.log('✅ Saved to IndexedDB successfully')
       // 同時備份到 localStorage（如果空間允許）
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(serializedData))
@@ -174,7 +182,7 @@ export async function saveToStorage(state: CubeState): Promise<void> {
       }
       return
     } catch (error) {
-      console.error('Failed to save to IndexedDB:', error)
+      console.error('❌ Failed to save to IndexedDB:', error)
       // 降級到 localStorage
       currentStorageType = 'localStorage'
     }

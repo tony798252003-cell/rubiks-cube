@@ -79,6 +79,12 @@ export async function saveToIndexedDB(data: any): Promise<void> {
         savedAt: Date.now()
       }
 
+      console.log('💾 IndexedDB wrapping data:', {
+        hasData: !!data,
+        dataKeys: data ? Object.keys(data) : [],
+        fsrsCardsInData: data?.fsrsCards?.length,
+      })
+
       const request = store.put(serializedData, STATE_KEY)
 
       request.onsuccess = () => {
@@ -124,6 +130,8 @@ export async function loadFromIndexedDB(): Promise<any | null> {
 
       request.onsuccess = () => {
         const result = request.result
+        console.log('📂 IndexedDB raw result:', result)
+        console.log('📂 IndexedDB result.data:', result ? result.data : null)
         resolve(result ? result.data : null)
       }
 
