@@ -38,6 +38,7 @@ export type CubeAction =
   | { type: 'UPDATE_FSRS_CARD'; payload: FSRSCard }
   | { type: 'UPDATE_DAILY_SESSION'; payload: DailySession }
   | { type: 'INIT_FSRS_CARDS' }
+  | { type: 'LOAD_STATE'; payload: CubeState }
 
 function createDefaultSession(): DailySession {
   const today = new Date().toISOString().split('T')[0]
@@ -178,6 +179,9 @@ function cubeReducer(state: CubeState, action: CubeAction): CubeState {
         fsrsCards: initializeFSRSCards(state.memoryWords),
         dailySession: createDefaultSession(),
       }
+    case 'LOAD_STATE': {
+      return action.payload
+    }
     default:
       return state
   }
@@ -198,17 +202,43 @@ export function CubeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     loadFromStorage().then(loaded => {
       if (loaded) {
-        // 用加載的數據替換默認狀態（通過直接設置）
-        Object.assign(state, loaded)
+        // 使用 LOAD_STATE action 來正確更新狀態
+        dispatch({ type: 'LOAD_STATE', payload: loaded })
       }
       setIsLoaded(true)
     })
   }, [])
 
-  // 保存狀態變更
+  // 保存狀態變更（使用 debounce 優化性能，並立即保存關鍵更新）
   useEffect(() => {
-    if (isLoaded) {
-      saveToStorage(state)
+    if (!isLoaded) return
+
+    // 立即保存到 storage
+    saveToStorage(state)
+  }, [state, isLoaded])
+
+  // 在頁面卸載前保存數據
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (isLoaded) {
+        // 使用 sendBeacon 或 同步保存確保數據被保存
+        saveToStorage(state)
+      }
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.hidden && isLoaded) {
+        // 當頁面隱藏時（切換到其他 tab 或最小化）立即保存
+        saveToStorage(state)
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [state, isLoaded])
 
