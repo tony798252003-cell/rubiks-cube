@@ -109,7 +109,8 @@ export function FlashcardPractice() {
     if (selectionResult.reason === 'new') {
       // 首次學習新卡片時記錄
       localSession.record_new_card_learned(selectionResult.card.id)
-    } else if (selectionResult.reason === 'review') {
+    } else if (selectionResult.reason === 'review' || selectionResult.reason === 'learning') {
+      // 記錄複習（包括學習中和正式複習）
       localSession.record_review()
     }
 
@@ -211,7 +212,10 @@ export function FlashcardPractice() {
         <div className="flashcard-stats">
           <span className="stat-item">總計: {localCards.length}</span>
           <span className="stat-item new">
-            今天: {stats.new_cards_today}/{stats.new_cards_today + stats.new_cards_remaining}
+            ✨ 新卡片: {stats.new_cards_today}
+          </span>
+          <span className="stat-item review">
+            📚 複習: {localSession?.get_session().reviews_completed || 0}
           </span>
           <span className="stat-item learning">學習中: {stats.learning_count}</span>
           <span className="stat-item due">待復習: {stats.due_count}</span>
@@ -232,7 +236,7 @@ export function FlashcardPractice() {
           <div style={{ fontSize: '48px', marginBottom: '10px' }}>🎉</div>
           <div style={{ fontSize: '18px', fontWeight: 'bold' }}>今日學習完成！</div>
           <div style={{ fontSize: '14px', marginTop: '8px', opacity: 0.8 }}>
-            已完成 {stats.new_cards_today} 張新卡片
+            ✨ 新卡片：{stats.new_cards_today} 張 · 📚 複習：{localSession?.get_session().reviews_completed || 0} 張
           </div>
           <button
             onClick={learnMore}
@@ -316,7 +320,8 @@ export function FlashcardPractice() {
               flexShrink: 0
             }}>
               <div style={{ display: 'flex', gap: '8px', fontSize: '12px', flexWrap: 'wrap' }}>
-                <span style={{ color: '#93c5fd' }}>📝 今天: {stats.new_cards_today}/{stats.new_cards_today + stats.new_cards_remaining}</span>
+                <span style={{ color: '#93c5fd' }}>✨ 新: {stats.new_cards_today}</span>
+                <span style={{ color: '#a78bfa' }}>📚 複習: {localSession?.get_session().reviews_completed || 0}</span>
                 <span style={{ color: '#fcd34d' }}>📖 學習中: {stats.learning_count}</span>
                 <span style={{ color: '#fca5a5' }}>⏰ 待復習: {stats.due_count}</span>
               </div>

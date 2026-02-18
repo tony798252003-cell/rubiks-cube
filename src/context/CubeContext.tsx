@@ -11,6 +11,7 @@ import { initializeFSRSCards } from '../types/fsrsMigration'
 import { saveToStorage, loadFromStorage } from '../utils/storage'
 import { applyScramble, createSolvedState, type CubeState as CubeStickers } from '../utils/cubeState'
 import { analyzeBlindsolve } from '../utils/blindsolve'
+import { syncFromGoogleSheets, isOnline } from '../utils/googleSheets'
 
 export type LabelMode = 'all' | 'corners' | 'edges' | 'none'
 export type LayoutMode = 'cube-focused' | 'balanced' | 'control-focused'
@@ -26,6 +27,7 @@ export interface CubeState {
   flashcards: FlashcardDeck  // 保留用於向後兼容
   fsrsCards: FSRSCard[]      // 新的 FSRS 系統
   dailySession: DailySession // 每日學習會話
+  googleSheetsUrl: string    // Google Sheets 同步 URL
 }
 
 export type CubeAction =
@@ -42,6 +44,8 @@ export type CubeAction =
   | { type: 'UPDATE_DAILY_SESSION'; payload: DailySession }
   | { type: 'INIT_FSRS_CARDS' }
   | { type: 'LOAD_STATE'; payload: CubeState }
+  | { type: 'SET_GOOGLE_SHEETS_URL'; payload: string }
+  | { type: 'SYNC_MEMORY_WORDS'; payload: MemoryWordDict }
 
 function createDefaultSession(): DailySession {
   const today = new Date().toISOString().split('T')[0]
@@ -67,6 +71,7 @@ const defaultState: CubeState = {
   flashcards: initializeFlashcards(DEFAULT_MEMORY_WORDS),
   fsrsCards: initializeFSRSCards(DEFAULT_MEMORY_WORDS),
   dailySession: createDefaultSession(),
+  googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1TU9O3pEdKNKM0d7JDdCDtwgg1PHNqtQH9N-3mZtgYQ8/edit?usp=sharing',
 }
 
 function getInitialState(): CubeState {
@@ -191,6 +196,25 @@ function cubeReducer(state: CubeState, action: CubeAction): CubeState {
     case 'LOAD_STATE': {
       return action.payload
     }
+    case 'SET_GOOGLE_SHEETS_URL':
+      return {
+        ...state,
+        googleSheetsUrl: action.payload,
+      }
+    case 'SYNC_MEMORY_WORDS': {
+      const syncedWords = action.payload
+      // 合併同步的記憶字（保留本地未在 Google Sheets 中的記憶字）
+      const mergedWords = {
+        ...state.memoryWords,
+        ...syncedWords,
+      }
+      return {
+        ...state,
+        memoryWords: mergedWords,
+        flashcards: initializeFlashcards(mergedWords),
+        fsrsCards: initializeFSRSCards(mergedWords),
+      }
+    }
     default:
       return state
   }
@@ -217,6 +241,27 @@ export function CubeProvider({ children }: { children: ReactNode }) {
       setIsLoaded(true)
     })
   }, [])
+
+  // 自動同步 Google Sheets（開啟時）
+  useEffect(() => {
+    if (!isLoaded) return
+    if (!state.googleSheetsUrl) return
+    if (!isOnline()) return
+
+    // 延遲 1 秒後同步，避免阻塞初始載入
+    const timer = setTimeout(async () => {
+      try {
+        console.log('🔄 自動同步 Google Sheets...')
+        const syncedWords = await syncFromGoogleSheets(state.googleSheetsUrl)
+        dispatch({ type: 'SYNC_MEMORY_WORDS', payload: syncedWords })
+        console.log('✅ Google Sheets 自動同步完成')
+      } catch (error) {
+        console.error('❌ Google Sheets 自動同步失敗:', error)
+      }
+    }, 1000)
+
+    return () => clearTimeout(timer)
+  }, [isLoaded, state.googleSheetsUrl])
 
   // 保存狀態變更（使用 debounce 優化性能，並立即保存關鍵更新）
   useEffect(() => {

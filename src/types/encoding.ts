@@ -45,11 +45,11 @@ export const DEFAULT_ZHUYIN_ENCODING: CubeEncoding = {
     // F 面 (I-L)
     'UFL-F': 'ㄒ', 'UFR-F': 'ㄑ', 'DFR-F': 'ㄊ', 'DFL-F': 'ㄉ',
     // R 面 (M-P)
-    'UFR-R': 'ㄗ', 'UBR-R': 'ㄘ', 'DBR-R': 'ㄙ', 'DFR-R': '1',
+    'UFR-R': 'ㄘ', 'UBR-R': 'ㄗ', 'DBR-R': '1', 'DFR-R': 'ㄙ',
     // B 面 (Q-T)
     'UBR-B': 'ㄐ', 'UBL-B': '', 'DBL-B': 'ㄌ', 'DBR-B': 'ㄋ',
     // D 面 (U-X)
-    'DFL-D': 'ㄅ', 'DFR-D': 'ㄆ', 'DBR-D': 'ㄈ', 'DBL-D': 'ㄇ',
+    'DFL-D': 'ㄅ', 'DFR-D': 'ㄆ', 'DBR-D': 'ㄇ', 'DBL-D': 'ㄈ',
   },
   edges: {
     // U 面 (A-D)
@@ -59,7 +59,7 @@ export const DEFAULT_ZHUYIN_ENCODING: CubeEncoding = {
     // F 面 (I-L)
     'UF-F': 'ㄒ', 'FR-F': 'ㄕ', 'DF-F': 'ㄉ', 'FL-F': 'ㄔ',
     // R 面 (M-P)
-    'UR-R': '', 'BR-R': 'ㄗ', 'DR-R': '1', 'FR-R': 'ㄘ',
+    'UR-R': '', 'BR-R': '1', 'DR-R': 'ㄌ', 'FR-R': 'ㄙ',
     // B 面 (Q-T)
     'UB-B': 'ㄐ', 'BL-B': 'ㄓ', 'DB-B': 'ㄋ', 'BR-B': 'ㄖ',
     // D 面 (U-X)
