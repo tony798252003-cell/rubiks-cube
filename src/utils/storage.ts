@@ -331,7 +331,7 @@ function parseStoredData(data: any): CubeState | null {
 
     const scramble = data.currentScramble ?? null
     const stickers = scramble ? applyScramble(scramble) : createSolvedState()
-    const memo = scramble ? analyzeBlindsolve(stickers, data.encoding) : null
+    const memo = scramble ? analyzeBlindsolve(stickers, resolvedEncoding) : null
     const memoryWords = data.memoryWords ?? DEFAULT_MEMORY_WORDS
 
     // 處理 FSRS 卡片
