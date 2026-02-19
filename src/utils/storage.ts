@@ -13,6 +13,7 @@ import {
   isIndexedDBSupported,
   testIndexedDB
 } from './indexedDB'
+import { DEFAULT_ZHUYIN_ENCODING, DEFAULT_SPEFFZ_ENCODING, ENCODING_VERSION } from '../types/encoding'
 
 export const STORAGE_KEY = 'cubeTrainer'
 const MIGRATED_FLAG_KEY = 'cubeTrainer_migrated_to_indexeddb'
@@ -152,6 +153,7 @@ export async function saveToStorage(state: CubeState): Promise<void> {
     flashcards: state.flashcards,
     fsrsCards: serializeFSRSCards(state.fsrsCards),
     dailySession: state.dailySession,
+    encodingVersion: ENCODING_VERSION,
     lastUpdated: new Date().toISOString(),
   }
 
@@ -317,6 +319,16 @@ function parseStoredData(data: any): CubeState | null {
       return null
     }
 
+    // 判斷 encoding 版本，版本舊時只重置 encoding，複習紀錄不動
+    let resolvedEncoding = data.encoding
+    const storedVersion = data.encodingVersion ?? 1
+    if (storedVersion < ENCODING_VERSION) {
+      const isSpeffz = Object.values(data.encoding.corners as Record<string, string>)
+        .some(v => /^[A-X]$/.test(v))
+      resolvedEncoding = isSpeffz ? DEFAULT_SPEFFZ_ENCODING : DEFAULT_ZHUYIN_ENCODING
+      console.log(`🔄 Encoding version upgraded ${storedVersion} → ${ENCODING_VERSION}, reset to default`)
+    }
+
     const scramble = data.currentScramble ?? null
     const stickers = scramble ? applyScramble(scramble) : createSolvedState()
     const memo = scramble ? analyzeBlindsolve(stickers, data.encoding) : null
@@ -386,7 +398,7 @@ function parseStoredData(data: any): CubeState | null {
     }
 
     return {
-      encoding: data.encoding,
+      encoding: resolvedEncoding,
       labelMode: data.labelMode ?? 'all',
       layoutMode: data.layoutMode ?? 'balanced',
       currentScramble: scramble,
