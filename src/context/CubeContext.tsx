@@ -1,6 +1,6 @@
 import { createContext, useReducer, useEffect, useState, ReactNode } from 'react'
 import type { CubeEncoding } from '../types/encoding'
-import { DEFAULT_ZHUYIN_ENCODING } from '../types/encoding'
+import { DEFAULT_ZHUYIN_ENCODING, DEFAULT_SPEFFZ_ENCODING } from '../types/encoding'
 import type { MemoryWordDict } from '../types/memoryWord'
 import { DEFAULT_MEMORY_WORDS } from '../types/memoryWord'
 import type { FlashcardDeck, Flashcard } from '../types/flashcard'
@@ -92,8 +92,13 @@ function cubeReducer(state: CubeState, action: CubeAction): CubeState {
         },
       }
     }
-    case 'RESET_ENCODING':
-      return { ...state, encoding: DEFAULT_ZHUYIN_ENCODING }
+    case 'RESET_ENCODING': {
+      const isSpeffz = Object.values(state.encoding.corners).some(v => /^[A-X]$/.test(v))
+      return {
+        ...state,
+        encoding: isSpeffz ? DEFAULT_SPEFFZ_ENCODING : DEFAULT_ZHUYIN_ENCODING
+      }
+    }
     case 'CYCLE_LABEL_MODE': {
       const modes: LabelMode[] = ['all', 'corners', 'edges', 'none']
       const idx = modes.indexOf(state.labelMode)

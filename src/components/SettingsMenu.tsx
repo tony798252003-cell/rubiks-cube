@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { useCubeContext } from '../hooks/useCubeContext'
 import { createPortal } from 'react-dom'
 import EncodingPanel from './EncodingPanel'
 import { MemoryWordEditor } from './MemoryWordEditor'
@@ -13,6 +14,7 @@ import {
 import { getStorageEstimate, formatBytes } from '../utils/indexedDB'
 
 export function SettingsMenu() {
+  const { dispatch } = useCubeContext()
   const [showEncodingPanel, setShowEncodingPanel] = useState(false)
   const [showMemoryEditor, setShowMemoryEditor] = useState(false)
   const [showSettingsMenu, setShowSettingsMenu] = useState(false)
@@ -80,6 +82,17 @@ export function SettingsMenu() {
         }
       }
     }
+  }
+
+  // 重置為預設編碼
+  const handleResetEncoding = () => {
+    const confirmed = window.confirm(
+      '重置注音/Speffz 編碼為預設值？\n\n' +
+      '⚠️ 此操作只影響編碼設定，不會影響複習紀錄。'
+    )
+    if (!confirmed) return
+    dispatch({ type: 'RESET_ENCODING' })
+    alert('✅ 編碼已重置為預設值！')
   }
 
   // 顯示存儲狀態
@@ -155,6 +168,18 @@ export function SettingsMenu() {
                 <div>
                   <div className="text-white text-lg font-semibold">編碼設定</div>
                   <div className="text-gray-400 text-sm">設定角塊和邊塊的編碼標籤</div>
+                </div>
+              </button>
+
+              {/* 重置為預設編碼 */}
+              <button
+                onClick={handleResetEncoding}
+                className="w-full text-left px-6 py-4 mb-3 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-xl transition-colors flex items-center gap-4"
+              >
+                <span className="text-3xl">↩️</span>
+                <div>
+                  <div className="text-amber-400 text-lg font-semibold">重置為預設編碼</div>
+                  <div className="text-amber-300/60 text-sm">重置編碼對應表（不影響複習紀錄）</div>
                 </div>
               </button>
 
