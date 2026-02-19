@@ -34,6 +34,7 @@ describe('storage', () => {
       flashcards: initializeFlashcards(DEFAULT_MEMORY_WORDS),
       fsrsCards: initializeFSRSCards(DEFAULT_MEMORY_WORDS),
       dailySession: createDefaultSession(),
+      googleSheetsUrl: '',
     }
     await saveToStorage(state)
     const loaded = await loadFromStorage()
@@ -64,6 +65,7 @@ describe('storage', () => {
       flashcards: initializeFlashcards(DEFAULT_MEMORY_WORDS),
       fsrsCards: initializeFSRSCards(DEFAULT_MEMORY_WORDS),
       dailySession: createDefaultSession(),
+      googleSheetsUrl: '',
     })
     await clearStorage()
     const loaded = await loadFromStorage()

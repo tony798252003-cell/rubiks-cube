@@ -396,6 +396,7 @@ function parseStoredData(data: any): CubeState | null {
       flashcards: data.flashcards ?? initializeFlashcards(memoryWords),
       fsrsCards,
       dailySession,
+      googleSheetsUrl: data.googleSheetsUrl ?? '',
     }
   } catch (error) {
     console.error('Failed to parse stored data:', error)

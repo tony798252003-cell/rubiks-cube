@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { useCubeContext } from '../hooks/useCubeContext'
 import { getMemoryWord, getMemoryWordKey } from '../types/memoryWord'
-import { syncFromGoogleSheets, isOnline, parseCSVToMemoryWords } from '../utils/googleSheets'
+import { syncFromGoogleSheets, isOnline } from '../utils/googleSheets'
 import './MemoryWordEditor.css'
 
 // 所有可能的編碼（包含數字1）
@@ -73,7 +73,6 @@ export function MemoryWordEditor() {
   const [syncStatus, setSyncStatus] = useState<string>('')
   const [showUrlInput, setShowUrlInput] = useState(false)
   const [urlInput, setUrlInput] = useState(state.googleSheetsUrl)
-  const csvFileInputRef = useRef<HTMLInputElement>(null)
 
   const handleReset = () => {
     if (window.confirm('確定要重置所有記憶字到預設值嗎？')) {
@@ -117,46 +116,9 @@ export function MemoryWordEditor() {
     }
   }
 
-  const handleImportCSV = () => {
-    csvFileInputRef.current?.click()
-  }
-
-  const handleCSVFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    setIsSyncing(true)
-    setSyncStatus('⏳ 匯入中...')
-
-    try {
-      const text = await file.text()
-      const syncedWords = parseCSVToMemoryWords(text)
-      dispatch({ type: 'SYNC_MEMORY_WORDS', payload: syncedWords })
-      setSyncStatus(`✅ 已匯入 ${Object.keys(syncedWords).length} 個記憶字`)
-      setTimeout(() => setSyncStatus(''), 5000)
-    } catch (error) {
-      setSyncStatus(`❌ 匯入失敗: ${(error as Error).message}`)
-      setTimeout(() => setSyncStatus(''), 5000)
-    } finally {
-      setIsSyncing(false)
-      // 清空 input 以便下次選擇相同文件
-      if (csvFileInputRef.current) {
-        csvFileInputRef.current.value = ''
-      }
-    }
-  }
 
   return (
     <div className="memory-word-section">
-      {/* 隱藏的 CSV 文件輸入 */}
-      <input
-        ref={csvFileInputRef}
-        type="file"
-        accept=".csv"
-        onChange={handleCSVFileChange}
-        style={{ display: 'none' }}
-      />
-
       <div className="memory-word-actions">
         {/* Google Sheets 同步 */}
         <div style={{ marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
