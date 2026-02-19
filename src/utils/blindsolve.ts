@@ -143,7 +143,7 @@ function traceEdges(
   // 如果 buffer 已還原，從 target 開始
   if (isEdgeSolved(state, EDGE_BUFFER, indexMap)) {
     currentPiece = EDGE_TARGET
-    console.log(`  → Buffer 已還原，從 Target (${EDGE_TARGET}) 開始`)
+    console.log(`  → Buffer 已還原，從 Target (${EDGE_TARGET}) 位置開始追蹤`)
 
     // 如果 target 也已還原，從循環順序中找第一個未還原的
     if (isEdgeSolved(state, EDGE_TARGET, indexMap)) {
@@ -155,7 +155,7 @@ function traceEdges(
         if (!solved && !found) {
           currentPiece = piece
           found = true
-          console.log(`  → 從 ${piece} 開始`)
+          console.log(`  ✅ 選擇起始位置: ${piece}`)
         }
       }
       // 如果所有邊塊都已還原，返回空陣列
@@ -167,6 +167,8 @@ function traceEdges(
   } else {
     console.log(`  → Buffer 未還原，從 Buffer (${EDGE_BUFFER}) 開始`)
   }
+
+  console.log(`\n📍 開始從位置 ${currentPiece} 追蹤...`)
 
   let cycleCount = 0
   const maxCycles = 12  // 最多 12 個邊塊
@@ -207,6 +209,11 @@ function traceEdges(
       const primaryIdx = indexMap[`${currentPiece}-${targetFace}`]
       const primaryColor = state[primaryIdx]
 
+      // 調試：顯示追蹤過程
+      if (i === 0) {
+        console.log(`  位置 ${currentPiece}-${targetFace}: 顏色=${primaryColor}+${color1 === primaryColor ? color2 : color1}`)
+      }
+
       // 找出這個顏色組合在 solved state 是哪個邊塊，並返回「primaryColor 那面」的貼紙
       const targetSticker = findEdgeStickerByColors(color1, color2, primaryColor)
       if (!targetSticker) break
@@ -219,6 +226,13 @@ function traceEdges(
       // 記錄編碼
       const label = encoding.edges[targetSticker]
       if (!label) break
+
+      // 調試：顯示選擇的貼紙和編碼
+      if (i === 0) {
+        console.log(`  → 這個邊塊應該在: ${targetSticker}`)
+        console.log(`  → 編碼: ${label}\n`)
+      }
+
       memo.push(label)
 
       // 如果回到循環起點，這個循環結束
