@@ -215,10 +215,10 @@ export function FlashcardPractice() {
             ✨ 新卡片: {stats.new_cards_today}
           </span>
           <span className="stat-item review">
-            📚 複習: {localSession?.get_session().reviews_completed || 0}
+            📚 複習: {localCards.filter(c => c.state === 'review' && new Date(c.due) <= new Date()).length}
           </span>
           <span className="stat-item learning">學習中: {stats.learning_count}</span>
-          <span className="stat-item due">待復習: {stats.due_count}</span>
+          <span className="stat-item due">待學習: {stats.total_new}</span>
         </div>
       </div>
 
@@ -321,9 +321,9 @@ export function FlashcardPractice() {
             }}>
               <div style={{ display: 'flex', gap: '8px', fontSize: '12px', flexWrap: 'wrap' }}>
                 <span style={{ color: '#93c5fd' }}>✨ 新: {stats.new_cards_today}</span>
-                <span style={{ color: '#a78bfa' }}>📚 複習: {localSession?.get_session().reviews_completed || 0}</span>
+                <span style={{ color: '#a78bfa' }}>📚 複習: {localCards.filter(c => c.state === 'review' && new Date(c.due) <= new Date()).length}</span>
                 <span style={{ color: '#fcd34d' }}>📖 學習中: {stats.learning_count}</span>
-                <span style={{ color: '#fca5a5' }}>⏰ 待復習: {stats.due_count}</span>
+                <span style={{ color: '#fca5a5' }}>⏰ 待學習: {stats.total_new}</span>
               </div>
               <button onClick={closeModal} style={{
                 background: 'none',
