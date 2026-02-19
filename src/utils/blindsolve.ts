@@ -232,12 +232,12 @@ function traceEdges(
         console.log(`  → 編碼: ${label}\n`)
       }
 
-      memo.push(label)
-
-      // 如果回到循環起點，這個循環結束
+      // 如果回到循環起點或 buffer，這個循環結束（不記錄 buffer 的貼紙）
       if (targetPiece === cycleStartPiece || targetPiece === EDGE_BUFFER) {
         break
       }
+
+      memo.push(label)
 
       // 如果已經訪問過，這個循環結束
       if (visited.has(targetPiece)) {
@@ -397,12 +397,13 @@ function traceCorners(
       // 記錄編碼
       const label = encoding.corners[targetSticker]
       if (!label) break
-      memo.push(label)
 
-      // 如果回到循環起點，這個循環結束
+      // 如果回到循環起點或 buffer，這個循環結束（不記錄 buffer 的貼紙）
       if (targetPiece === cycleStartPiece || targetPiece === CORNER_BUFFER) {
         break
       }
+
+      memo.push(label)
 
       // 如果已經訪問過，這個循環結束
       if (visited.has(targetPiece)) {
