@@ -71,7 +71,7 @@ const defaultState: CubeState = {
   flashcards: initializeFlashcards(DEFAULT_MEMORY_WORDS),
   fsrsCards: initializeFSRSCards(DEFAULT_MEMORY_WORDS),
   dailySession: createDefaultSession(),
-  googleSheetsUrl: 'https://docs.google.com/spreadsheets/d/1TU9O3pEdKNKM0d7JDdCDtwgg1PHNqtQH9N-3mZtgYQ8/edit?usp=sharing',
+  googleSheetsUrl: 'https://script.google.com/macros/s/AKfycby5xwJfK_jKXw32Xo44mpwwaX7VG0BzD5APsi5PQPZHbkGh5OlyRWJxTEV__YMB_-5R/exec',
 }
 
 function getInitialState(): CubeState {

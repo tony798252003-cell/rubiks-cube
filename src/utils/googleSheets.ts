@@ -102,16 +102,33 @@ export function parseCSVToMemoryWords(csvText: string, delimiter: string = ','):
 
 /**
  * 從 Google Sheets 同步記憶字典
+ * 支援兩種格式：
+ * 1. Google Apps Script URL（直接返回 JSON）
+ * 2. Google Sheets URL（需要轉換為 CSV）
  */
 export async function syncFromGoogleSheets(url: string, useCorsProxy: boolean = true): Promise<MemoryWordDict> {
-  const csvURL = getCSVExportURL(url)
-
-  if (!csvURL) {
-    throw new Error('無效的 Google Sheets URL')
-  }
-
   try {
-    // 使用 CORS 代理來繞過限制（使用 corsproxy.io）
+    // 檢查是否為 Google Apps Script URL
+    if (url.includes('script.google.com')) {
+      // 直接請求 Google Apps Script，返回 JSON
+      const response = await fetch(url)
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+
+      const json = await response.json()
+      return json as MemoryWordDict
+    }
+
+    // 否則處理為 Google Sheets URL
+    const csvURL = getCSVExportURL(url)
+
+    if (!csvURL) {
+      throw new Error('無效的 Google Sheets URL')
+    }
+
+    // 使用 CORS 代理來繞過限制
     const finalURL = useCorsProxy
       ? `https://corsproxy.io/?${encodeURIComponent(csvURL)}`
       : csvURL
