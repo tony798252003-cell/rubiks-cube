@@ -396,7 +396,7 @@ function parseStoredData(data: any): CubeState | null {
       flashcards: data.flashcards ?? initializeFlashcards(memoryWords),
       fsrsCards,
       dailySession,
-      googleSheetsUrl: data.googleSheetsUrl ?? '',
+      googleSheetsUrl: data.googleSheetsUrl || 'https://script.google.com/macros/s/AKfycby5xwJfK_jKXw32Xo44mpwwaX7VG0BzD5APsi5PQPZHbkGh5OlyRWJxTEV__YMB_-5R/exec',
     }
   } catch (error) {
     console.error('Failed to parse stored data:', error)
