@@ -178,16 +178,15 @@ function traceEdges(
     let cycleStartPiece = currentPiece
     currentFace = null  // 新循環開始，重置面
 
-    // 如果不是第一個循環，先記錄新循環起點的編碼作為 cycle break
-    if (cycleCount > 1) {
-      const edgeInfo = EDGES.find(([p]) => p === currentPiece)
-      if (edgeInfo) {
-        const currentFaces = edgeInfo[2]
-        const cycleBreakSticker = `${currentPiece}-${currentFaces[0]}`
-        const cycleBreakLabel = encoding.edges[cycleBreakSticker]
-        if (cycleBreakLabel) {
-          memo.push(cycleBreakLabel)
-        }
+    // 記錄循環起點的編碼（包括第一個循環）
+    const edgeInfo = EDGES.find(([p]) => p === currentPiece)
+    if (edgeInfo) {
+      const currentFaces = edgeInfo[2]
+      const startSticker = `${currentPiece}-${currentFaces[0]}`
+      const startLabel = encoding.edges[startSticker]
+      if (startLabel) {
+        memo.push(startLabel)
+        console.log(`  🎯 記錄起始貼紙: ${startSticker} = ${startLabel}`)
       }
     }
 
