@@ -1,5 +1,8 @@
 import type { CornerPosition, EdgePosition, Face } from './cube'
 
+
+// 每次修改 DEFAULT_ZHUYIN_ENCODING 時，必須 +1
+export const ENCODING_VERSION = 2
 // 完整編碼系統：每個貼紙都有獨立的編碼
 // Key 格式："piece-face"，例如 "UFR-U", "UFR-F", "UFR-R"
 export interface CubeEncoding {
