@@ -140,29 +140,23 @@ function traceEdges(
   console.log(`  Buffer (${EDGE_BUFFER}): ${isEdgeSolved(state, EDGE_BUFFER, indexMap) ? '✅ 已還原' : '❌ 未還原'}`)
   console.log(`  Target (${EDGE_TARGET}): ${isEdgeSolved(state, EDGE_TARGET, indexMap) ? '✅ 已還原' : '❌ 未還原'}`)
 
-  // 如果 buffer 已還原，從 target 開始
+  // 如果 buffer 已還原，從循環順序找第一個未還原的方塊開始
   if (isEdgeSolved(state, EDGE_BUFFER, indexMap)) {
-    currentPiece = EDGE_TARGET
-    console.log(`  → Buffer 已還原，從 Target (${EDGE_TARGET}) 位置開始追蹤`)
-
-    // 如果 target 也已還原，從循環順序中找第一個未還原的
-    if (isEdgeSolved(state, EDGE_TARGET, indexMap)) {
-      console.log(`  → Target 也已還原，檢查循環順序：`)
-      let found = false
-      for (const piece of EDGE_CYCLE_ORDER) {
-        const solved = isEdgeSolved(state, piece, indexMap)
-        console.log(`    ${piece}: ${solved ? '✅' : '❌'}`)
-        if (!solved && !found) {
-          currentPiece = piece
-          found = true
-          console.log(`  ✅ 選擇起始位置: ${piece}`)
-        }
+    console.log(`  → Buffer 已還原，從循環順序找第一個未還原的方塊：`)
+    let found = false
+    for (const piece of EDGE_CYCLE_ORDER) {
+      const solved = isEdgeSolved(state, piece, indexMap)
+      console.log(`    ${piece}: ${solved ? '✅' : '❌'}`)
+      if (!solved && !found) {
+        currentPiece = piece
+        found = true
+        console.log(`  ✅ 選擇起始位置: ${piece}`)
       }
-      // 如果所有邊塊都已還原，返回空陣列
-      if (!found) {
-        console.log('  → 所有邊塊都已還原')
-        return []
-      }
+    }
+    // 如果所有邊塊都已還原，返回空陣列
+    if (!found) {
+      console.log('  → 所有邊塊都已還原')
+      return []
     }
   } else {
     console.log(`  → Buffer 未還原，從 Buffer (${EDGE_BUFFER}) 開始`)
