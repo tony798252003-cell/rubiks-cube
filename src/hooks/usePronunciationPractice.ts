@@ -34,6 +34,8 @@ export interface PronunciationState {
   progress: number
   questionDelay: number
   answerDelay: number
+  subsetMode: boolean
+  subsetSize: number
 }
 
 export function usePronunciationPractice(memoryWords: MemoryWordDict) {
@@ -44,6 +46,8 @@ export function usePronunciationPractice(memoryWords: MemoryWordDict) {
     progress: 0,
     questionDelay: 3,
     answerDelay: 2,
+    subsetMode: false,
+    subsetSize: 20,
   })
 
   const queueRef = useRef<PronunciationPair[]>([])
@@ -52,6 +56,9 @@ export function usePronunciationPractice(memoryWords: MemoryWordDict) {
   const isPlayingRef = useRef(false)
   const questionDelayRef = useRef(3)
   const answerDelayRef = useRef(2)
+  const subsetModeRef = useRef(false)
+  const subsetSizeRef = useRef(20)
+  const subsetPoolRef = useRef<PronunciationPair[]>([])
   const memoryWordsRef = useRef(memoryWords)
 
   useEffect(() => {
@@ -75,7 +82,17 @@ export function usePronunciationPractice(memoryWords: MemoryWordDict) {
     if (!isPlayingRef.current) return
 
     if (indexRef.current >= queueRef.current.length) {
-      queueRef.current = buildShuffledPairs()
+      // 重新打亂：抽題模式只在子集內打亂，全部模式打亂所有 484 題
+      if (subsetModeRef.current && subsetPoolRef.current.length > 0) {
+        const pool = [...subsetPoolRef.current]
+        for (let i = pool.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1))
+          ;[pool[i], pool[j]] = [pool[j], pool[i]]
+        }
+        queueRef.current = pool
+      } else {
+        queueRef.current = buildShuffledPairs()
+      }
       indexRef.current = 0
     }
 
@@ -118,13 +135,20 @@ export function usePronunciationPractice(memoryWords: MemoryWordDict) {
   }, [speak])
 
   const start = useCallback(() => {
-    if (queueRef.current.length === 0) {
+    if (subsetModeRef.current) {
+      // 抽題模式：從 484 題中抽取 N 題作為子集
+      const all = buildShuffledPairs()
+      const size = Math.min(Math.max(2, subsetSizeRef.current), 484)
+      subsetPoolRef.current = all.slice(0, size)
+      queueRef.current = [...subsetPoolRef.current]
+    } else {
       queueRef.current = buildShuffledPairs()
-      indexRef.current = 0
+      subsetPoolRef.current = []
     }
+    indexRef.current = 0
     isPlayingRef.current = true
-    setState(prev => ({ ...prev, isPlaying: true }))
-    playNext()
+    setState(prev => ({ ...prev, isPlaying: true, progress: 0 }))
+    void playNext()
   }, [playNext])
 
   const pause = useCallback(() => {
@@ -144,6 +168,16 @@ export function usePronunciationPractice(memoryWords: MemoryWordDict) {
     setState(prev => ({ ...prev, answerDelay: v }))
   }, [])
 
+  const setSubsetMode = useCallback((v: boolean) => {
+    subsetModeRef.current = v
+    setState(prev => ({ ...prev, subsetMode: v }))
+  }, [])
+
+  const setSubsetSize = useCallback((v: number) => {
+    subsetSizeRef.current = v
+    setState(prev => ({ ...prev, subsetSize: v }))
+  }, [])
+
   useEffect(() => {
     return () => {
       isPlayingRef.current = false
@@ -152,5 +186,5 @@ export function usePronunciationPractice(memoryWords: MemoryWordDict) {
     }
   }, [])
 
-  return { state, start, pause, setQuestionDelay, setAnswerDelay }
+  return { state, start, pause, setQuestionDelay, setAnswerDelay, setSubsetMode, setSubsetSize }
 }

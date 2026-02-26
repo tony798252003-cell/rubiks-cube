@@ -8,7 +8,7 @@ interface Props {
 
 export function PronunciationPractice({ onClose }: Props) {
   const { state: cubeState } = useCubeContext()
-  const { state, start, pause, setQuestionDelay, setAnswerDelay } = usePronunciationPractice(cubeState.memoryWords)
+  const { state, start, pause, setQuestionDelay, setAnswerDelay, setSubsetMode, setSubsetSize } = usePronunciationPractice(cubeState.memoryWords)
 
   const memoryWord = state.currentPair
     ? (cubeState.memoryWords[state.currentPair.key] || '未定')
@@ -55,12 +55,12 @@ export function PronunciationPractice({ onClose }: Props) {
         <div className="w-full max-w-sm">
           <div className="flex justify-between text-slate-400 text-sm mb-2">
             <span>進度</span>
-            <span>{state.progress} / 484</span>
+            <span>{state.progress} / {state.subsetMode ? state.subsetSize : 484}</span>
           </div>
           <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
             <div
               className="h-full bg-indigo-500 rounded-full transition-all duration-300"
-              style={{ width: `${(state.progress / 484) * 100}%` }}
+              style={{ width: `${(state.progress / (state.subsetMode ? state.subsetSize : 484)) * 100}%` }}
             />
           </div>
         </div>
@@ -69,6 +69,49 @@ export function PronunciationPractice({ onClose }: Props) {
       {/* 底部控制 */}
       <div className="px-6 py-6 border-t border-white/10 bg-slate-800/30 flex-shrink-0">
         <div className="max-w-sm mx-auto flex flex-col gap-4">
+          {/* 抽題模式 */}
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-slate-300 text-sm w-24">練習範圍</span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setSubsetMode(false)}
+                disabled={state.isPlaying}
+                className={`px-3 py-1 rounded-lg text-sm transition-colors cursor-pointer ${
+                  !state.subsetMode
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-white/10 text-slate-400 hover:bg-white/20'
+                } disabled:opacity-40 disabled:cursor-not-allowed`}
+              >
+                全部
+              </button>
+              <button
+                onClick={() => setSubsetMode(true)}
+                disabled={state.isPlaying}
+                className={`px-3 py-1 rounded-lg text-sm transition-colors cursor-pointer ${
+                  state.subsetMode
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-white/10 text-slate-400 hover:bg-white/20'
+                } disabled:opacity-40 disabled:cursor-not-allowed`}
+              >
+                隨機抽題
+              </button>
+              {state.subsetMode && (
+                <input
+                  type="number"
+                  min={2}
+                  max={484}
+                  value={state.subsetSize}
+                  disabled={state.isPlaying}
+                  onChange={e => setSubsetSize(Math.min(484, Math.max(2, Number(e.target.value))))}
+                  className="w-16 bg-white/10 border border-white/20 text-white text-center rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-indigo-400 disabled:opacity-40"
+                />
+              )}
+              {state.subsetMode && (
+                <span className="text-slate-400 text-sm">題</span>
+              )}
+            </div>
+          </div>
+
           {/* 間隔設定 */}
           <div className="flex items-center justify-between gap-4">
             <label htmlFor="question-delay" className="text-slate-300 text-sm w-24">問題間隔</label>
