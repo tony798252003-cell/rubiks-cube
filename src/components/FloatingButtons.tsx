@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useCubeContext } from '../hooks/useCubeContext'
 import { FlashcardPractice } from './FlashcardPractice'
+import { PronunciationPractice } from './PronunciationPractice'
 
 export function FloatingButtons() {
   const { state, dispatch } = useCubeContext()
   const [showFlashcardPractice, setShowFlashcardPractice] = useState(false)
+  const [showPronunciation, setShowPronunciation] = useState(false)
 
   return (
     <>
@@ -31,6 +33,10 @@ export function FloatingButtons() {
           </div>
         </div>,
         document.body
+      )}
+
+      {showPronunciation && (
+        <PronunciationPractice onClose={() => setShowPronunciation(false)} />
       )}
 
       {/* 浮動按鈕 - 左上角：標籤切換 */}
@@ -72,6 +78,18 @@ export function FloatingButtons() {
           {state.layoutMode === 'cube-focused' ? '📐' :
            state.layoutMode === 'balanced' ? '⚖️' : '📊'}
         </span>
+      </button>
+      {/* 浮動按鈕 - 右下角：朗讀練習 */}
+      <button
+        onClick={() => setShowPronunciation(true)}
+        className="absolute bottom-4 right-4 w-12 h-12 bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 z-10 cursor-pointer"
+        title="朗讀練習"
+        aria-label="朗讀練習"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+            d="M15.536 8.464a5 5 0 010 7.072M12 6v12m0 0l-3-3m3 3l3-3M9.172 16.172a4 4 0 010-5.656M6.343 17.657a8 8 0 010-11.314" />
+        </svg>
       </button>
     </>
   )
