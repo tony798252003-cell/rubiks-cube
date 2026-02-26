@@ -33,7 +33,7 @@ export function PronunciationPractice({ onClose }: Props) {
       {/* 主內容 */}
       <div className="flex-1 flex flex-col items-center justify-center gap-8 px-6">
         {/* 注音配對 */}
-        <div className="text-white font-bold tracking-widest" style={{ fontSize: '4.5rem' }}>
+        <div className="text-white font-bold tracking-widest text-[4.5rem]">
           {state.currentPair
             ? `${state.currentPair.symbol1} ${state.currentPair.symbol2}`
             : '—'}
@@ -41,12 +41,14 @@ export function PronunciationPractice({ onClose }: Props) {
 
         {/* 記憶詞 / ??? */}
         <div
-          className={`font-bold transition-opacity duration-200 ${state.showAnswer ? 'opacity-100 text-white' : 'opacity-60 text-slate-400'}`}
-          style={{ fontSize: '3rem' }}
+          className={`font-bold text-[3rem] transition-opacity duration-200 ${
+            state.showAnswer ? 'opacity-100 text-white' : 'opacity-100 text-slate-400'
+          }`}
         >
           {state.currentPair
             ? (state.showAnswer ? memoryWord : '???')
-            : '按下開始'}
+            : <span className="text-slate-500 text-[2rem]">按下開始</span>
+          }
         </div>
 
         {/* 進度條 */}
@@ -69,9 +71,10 @@ export function PronunciationPractice({ onClose }: Props) {
         <div className="max-w-sm mx-auto flex flex-col gap-4">
           {/* 間隔設定 */}
           <div className="flex items-center justify-between gap-4">
-            <label className="text-slate-300 text-sm w-24">問題間隔</label>
+            <label htmlFor="question-delay" className="text-slate-300 text-sm w-24">問題間隔</label>
             <div className="flex items-center gap-2">
               <input
+                id="question-delay"
                 type="number"
                 min={1}
                 max={30}
@@ -83,9 +86,10 @@ export function PronunciationPractice({ onClose }: Props) {
             </div>
           </div>
           <div className="flex items-center justify-between gap-4">
-            <label className="text-slate-300 text-sm w-24">答案停留</label>
+            <label htmlFor="answer-delay" className="text-slate-300 text-sm w-24">答案停留</label>
             <div className="flex items-center gap-2">
               <input
+                id="answer-delay"
                 type="number"
                 min={1}
                 max={30}
@@ -99,6 +103,7 @@ export function PronunciationPractice({ onClose }: Props) {
 
           {/* 開始/暫停按鈕 */}
           <button
+            aria-label={state.isPlaying ? '暫停' : '開始'}
             onClick={state.isPlaying ? pause : start}
             className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold rounded-xl transition-colors duration-150 cursor-pointer mt-2"
           >
