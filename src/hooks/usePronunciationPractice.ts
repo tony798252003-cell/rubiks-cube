@@ -60,12 +60,13 @@ export function usePronunciationPractice(memoryWords: MemoryWordDict) {
 
   const speak = useCallback((text: string): Promise<void> => {
     return new Promise((resolve) => {
+      const timeout = setTimeout(resolve, 10000)
       window.speechSynthesis.cancel()
       const utter = new SpeechSynthesisUtterance(text)
       utter.lang = 'zh-TW'
       utter.rate = 0.9
-      utter.onend = () => resolve()
-      utter.onerror = () => resolve()
+      utter.onend = () => { clearTimeout(timeout); resolve() }
+      utter.onerror = () => { clearTimeout(timeout); resolve() }
       window.speechSynthesis.speak(utter)
     })
   }, [])
@@ -112,7 +113,7 @@ export function usePronunciationPractice(memoryWords: MemoryWordDict) {
     })
 
     if (isPlayingRef.current) {
-      playNext()
+      void playNext()
     }
   }, [speak])
 
